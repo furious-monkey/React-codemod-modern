@@ -3,4 +3,4 @@
 jest.autoMockOff();
 const { defineTest } = require("jscodeshift/dist/testUtils");
 
-defineTest(__dirname, "removeImmutableMapCalls");
+defineTest(__dirname, "removeImmutableFromJsCalls");
