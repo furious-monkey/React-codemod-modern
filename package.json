@@ -1,0 +1,17 @@
+{
+  "name": "try-codemod",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/mucsi96/try-codemod.git",
+  "author": "Igor Mucsicska <mucsi_96@yahoo.com>",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jscodeshift": "^0.10.0"
+  },
+  "dependencies": {
+    "jest": "^26.2.2"
+  }
+}
