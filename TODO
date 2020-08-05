@@ -1,6 +1,5 @@
-- Remove .toJS()
-- Remove .toArray()
 - Remove .get('xy')
 - Remove .getIn(['x', 'y'])
 - Remove .set('xy)
 - Remove .setIn(['x', 'y'])
+- Remove List()
