@@ -2,4 +2,3 @@
 - Remove .getIn(['x', 'y'])
 - Remove .set('xy)
 - Remove .setIn(['x', 'y'])
-- Remove List()
