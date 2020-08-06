@@ -13,7 +13,8 @@ function transformer(file, api) {
       callee: { name: localName },
     })
     .forEach((path) => {
-      j(path).replaceWith(path.node.arguments[0]);
+      const args = path.node.arguments;
+      j(path).replaceWith(args.length ? args[0] : j.arrayExpression([]));
     })
     .toSource();
 }

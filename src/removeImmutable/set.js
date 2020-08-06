@@ -1,26 +1,29 @@
-function set(j, object, key, value) {
-  const spread = j.spreadElement(object);
-  const property = j.objectProperty(j.identifier(key), value);
-
-  return j.objectExpression([spread, property]);
-}
-
 function transformer(file, api) {
   const j = api.jscodeshift;
+  const root = j(file.source);
 
-  return j(file.source)
+  return root
     .find(j.CallExpression, {
       callee: { property: { name: "set" } },
       arguments: { 0: { type: "Literal" } },
     })
     .forEach((path) => {
-      j(path).replaceWith(
-        set(
-          j,
-          path.node.callee.object,
-          path.node.arguments[0].value,
+      const innerSetCalls = j(path).find(j.CallExpression, {
+        callee: { property: { name: "set" } },
+        arguments: { 0: { type: "Literal" } },
+      });
+
+      const paths = [path, ...innerSetCalls.paths()].reverse();
+      const object = paths[0].node.callee.object;
+      const properties = paths.map((path) =>
+        j.objectProperty(
+          j.identifier(path.node.arguments[0].value),
           path.node.arguments[1]
         )
+      );
+
+      j(path).replaceWith(
+        j.objectExpression([j.spreadElement(object), ...properties])
       );
     })
     .toSource();

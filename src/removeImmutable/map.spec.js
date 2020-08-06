@@ -17,4 +17,20 @@ describe("map", () => {
       `
     );
   });
+
+  test("Map is replaced with empty object if called wihout paremeters", () => {
+    testTransformer(
+      transformer,
+      `
+        import { Map } from "immutable";
+
+        const m = Map();
+      `,
+      `
+        import { Map } from "immutable";
+
+        const m = {};
+      `
+    );
+  });
 });

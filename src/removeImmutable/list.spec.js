@@ -17,4 +17,20 @@ describe("list", () => {
       `
     );
   });
+
+  test("List is replaced with empty array if called wihout paremeters", () => {
+    testTransformer(
+      transformer,
+      `
+        import { List } from "immutable";
+
+        const m = List();
+      `,
+      `
+        import { List } from "immutable";
+
+        const m = [];
+      `
+    );
+  });
 });

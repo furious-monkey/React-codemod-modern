@@ -1,1 +1,7 @@
 - Remove .setIn(['x', 'y'], 'a')
+- Handel chained .set, .setIn, .updateIn calls
+- OrderedMap
+- Set
+- remove imports
+- OrderedSet
+- updateIn
