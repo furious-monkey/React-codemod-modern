@@ -1,19 +1,19 @@
-const transformer = require("./fromJS");
+const transformer = require("./toJS");
 const { testTransformer } = require("../testUtils");
 
-describe("fromJS", () => {
-  test("Remove fromJS calls", () => {
+describe("toJS", () => {
+  test("Remove toJS calls", () => {
     testTransformer(
       transformer,
       `
         import { fromJS } from "immutable";
 
-        const m = fromJS({ a: true });
+        const m = fromJS({ a: true }).toJS();
       `,
       `
         import { fromJS } from "immutable";
 
-        const m = { a: true };
+        const m = fromJS({ a: true });
       `
     );
   });
