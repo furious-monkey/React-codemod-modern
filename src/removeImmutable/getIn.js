@@ -23,6 +23,7 @@ function transformer(file, api) {
   return j(file.source)
     .find(j.CallExpression, {
       callee: { property: { name: "getIn" } },
+      arguments: { 0: { type: "ArrayExpression" } },
     })
     .forEach((path) => {
       j(path).replaceWith(

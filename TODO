@@ -1,2 +1,1 @@
-- Remove .set('xy)
-- Remove .setIn(['x', 'y'])
+- Remove .setIn(['x', 'y'], 'a')

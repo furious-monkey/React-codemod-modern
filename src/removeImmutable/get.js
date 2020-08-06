@@ -4,6 +4,7 @@ function transformer(file, api) {
   return j(file.source)
     .find(j.CallExpression, {
       callee: { property: { name: "get" } },
+      arguments: { 0: { type: "Literal" } },
     })
     .forEach((path) => {
       const hasFallback = path.node.arguments.length > 1;
