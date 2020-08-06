@@ -1,4 +1,3 @@
-- Remove .get('xy')
 - Remove .getIn(['x', 'y'])
 - Remove .set('xy)
 - Remove .setIn(['x', 'y'])
