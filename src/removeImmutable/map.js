@@ -4,11 +4,22 @@ function transformer(file, api) {
   const importDeclaration = root.find(j.ImportDeclaration, {
     source: { value: "immutable" },
   });
-  const localName = importDeclaration
-    .find(j.ImportSpecifier, { imported: { name: "Map" } })
-    .get(0).node.local.name;
+  const hasMultipleSpecifiers =
+    importDeclaration.find(j.ImportSpecifier).length > 1;
+  const importSpecifier = importDeclaration.find(j.ImportSpecifier, {
+    imported: { name: "Map" },
+  });
+  const localName = importSpecifier.get(0).node.local.name;
 
-  return j(file.source)
+  if (localName) {
+    if (hasMultipleSpecifiers) {
+      importSpecifier.remove();
+    } else {
+      importDeclaration.remove();
+    }
+  }
+
+  return root
     .find(j.CallExpression, {
       callee: { name: localName },
     })

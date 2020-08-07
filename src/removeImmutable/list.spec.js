@@ -6,12 +6,12 @@ describe("list", () => {
     testTransformer(
       transformer,
       `
-        import { List } from "immutable";
+        import { List, Map } from "immutable";
 
         const m = List([]);
       `,
       `
-        import { List } from "immutable";
+        import { Map } from "immutable";
 
         const m = [];
       `
@@ -22,13 +22,27 @@ describe("list", () => {
     testTransformer(
       transformer,
       `
-        import { List } from "immutable";
+        import { List, Map } from "immutable";
 
         const m = List();
       `,
       `
+        import { Map } from "immutable";
+
+        const m = [];
+      `
+    );
+  });
+
+  test("Removes import completly if nothing else is imported", () => {
+    testTransformer(
+      transformer,
+      `
         import { List } from "immutable";
 
+        const m = List([]);
+      `,
+      `
         const m = [];
       `
     );

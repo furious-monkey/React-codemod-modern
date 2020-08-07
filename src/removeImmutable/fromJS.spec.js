@@ -6,13 +6,27 @@ describe("fromJS", () => {
     testTransformer(
       transformer,
       `
+        import { fromJS, Map } from "immutable";
+
+        const m = fromJS({ a: true });
+      `,
+      `
+        import { Map } from "immutable";
+
+        const m = { a: true };
+      `
+    );
+  });
+
+  test("Removes import completly if nothing else is imported", () => {
+    testTransformer(
+      transformer,
+      `
         import { fromJS } from "immutable";
 
         const m = fromJS({ a: true });
       `,
       `
-        import { fromJS } from "immutable";
-
         const m = { a: true };
       `
     );
