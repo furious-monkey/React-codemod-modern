@@ -1,19 +1,36 @@
-function getIn(j, object, key) {
+function getNestedIdentifier({ j, object, key }) {
   const firstIdentifier = j.identifier(key[0]);
 
   if (key.length > 1) {
-    return getIn(
+    return getNestedIdentifier({
       j,
-      j.optionalMemberExpression(object, firstIdentifier),
-      key.slice(1)
-    );
+      object: j.optionalMemberExpression(object, firstIdentifier),
+      key: key.slice(1),
+    });
   }
 
   return j.memberExpression(object, firstIdentifier);
 }
 
-function transformLevel(j, object, callExpressions, level) {
-  const properties = callExpressions
+function transformValue({ j, key, level, object, mutationCalls, value }) {
+  return key.type === "ArrayExpression" && key.elements.length > level + 1
+    ? transformLevel({
+        j,
+        object,
+        mutationCalls: mutationCalls.filter((path) => {
+          const mutationKey = path.node.arguments[0];
+          return (
+            mutationKey.type === "ArrayExpression" &&
+            mutationKey.elements[level].value === key.elements[level].value
+          );
+        }),
+        level: level + 1,
+      })
+    : value;
+}
+
+function getProperties(mutationCalls, level) {
+  return mutationCalls
     .map((path) => {
       const [key, value] = path.node.arguments;
       return {
@@ -28,39 +45,30 @@ function transformLevel(j, object, callExpressions, level) {
     .filter(
       ({ propertyName }, index, array) =>
         array.findIndex((item) => item.propertyName === propertyName) === index
-    )
-    .map(({ key, value, propertyName }) => {
+    );
+}
+
+function transformLevel({ j, object, mutationCalls, level }) {
+  const properties = getProperties(mutationCalls, level).map(
+    ({ key, value, propertyName }) => {
       return j.objectProperty(
         j.identifier(propertyName),
-        key.type === "ArrayExpression" && key.elements.length > level + 1
-          ? transformLevel(
-              j,
-              object,
-              callExpressions.filter((path) => {
-                const mutationKey = path.node.arguments[0];
-                return (
-                  mutationKey.type === "ArrayExpression" &&
-                  mutationKey.elements[level].value ===
-                    key.elements[level].value
-                );
-              }),
-              level + 1
-            )
-          : value
+        transformValue({ j, key, level, object, mutationCalls, value })
       );
-    });
+    }
+  );
 
   return j.objectExpression([
     j.spreadElement(
       level === 0
         ? object
-        : getIn(
+        : getNestedIdentifier({
             j,
             object,
-            callExpressions[0].node.arguments[0].elements
+            key: mutationCalls[0].node.arguments[0].elements
               .map((element) => element.value)
-              .slice(0, level)
-          )
+              .slice(0, level),
+          })
     ),
     ...properties,
   ]);
@@ -102,7 +110,12 @@ function transformer(file, api) {
         ...findMutationCalls(j, j(path)).paths(),
       ].reverse();
       j(path).replaceWith(
-        transformLevel(j, mutationCalls[0].node.callee.object, mutationCalls, 0)
+        transformLevel({
+          j,
+          object: mutationCalls[0].node.callee.object,
+          mutationCalls,
+          level: 0,
+        })
       );
     })
     .toSource();
