@@ -29,13 +29,34 @@ function transformValue({ j, key, level, object, mutationCalls, value }) {
     : value;
 }
 
-function getProperties(mutationCalls, level) {
+function getNewValue({ j, mutationCall, value, key, object }) {
+  if (
+    !["update", "updateIn"].includes(mutationCall.node.callee.property.name)
+  ) {
+    return value;
+  }
+
+  const args = [
+    getNestedIdentifier({
+      j,
+      object,
+      key:
+        key.type === "ArrayExpression"
+          ? key.elements.map((element) => element.value)
+          : [key.value],
+    }),
+  ];
+
+  return j.callExpression(value, args);
+}
+
+function getProperties({ j, object, mutationCalls, level }) {
   return mutationCalls
     .map((path) => {
       const [key, value] = path.node.arguments;
       return {
         key,
-        value,
+        value: getNewValue({ j, mutationCall: path, value, key, object }),
         propertyName:
           key.type === "ArrayExpression"
             ? key.elements[level].value
@@ -49,7 +70,7 @@ function getProperties(mutationCalls, level) {
 }
 
 function transformLevel({ j, object, mutationCalls, level }) {
-  const properties = getProperties(mutationCalls, level).map(
+  const properties = getProperties({ j, object, mutationCalls, level }).map(
     ({ key, value, propertyName }) => {
       return j.objectProperty(
         j.identifier(propertyName),
@@ -92,10 +113,32 @@ function isSetInCall(node) {
   );
 }
 
+function isUpdateCall(node) {
+  return (
+    node.callee.property &&
+    node.callee.property.name === "update" &&
+    node.arguments.length &&
+    node.arguments[0].type === "Literal"
+  );
+}
+
+function isUpdateInCall(node) {
+  return (
+    node.callee.property &&
+    node.callee.property.name === "updateIn" &&
+    node.arguments.length &&
+    node.arguments[0].type === "ArrayExpression"
+  );
+}
+
 function findMutationCalls(j, root) {
   return root.find(
     j.CallExpression,
-    (node) => isSetCall(node) || isSetInCall(node)
+    (node) =>
+      isSetCall(node) ||
+      isSetInCall(node) ||
+      isUpdateCall(node) ||
+      isUpdateInCall(node)
   );
 }
 
