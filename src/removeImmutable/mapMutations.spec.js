@@ -1,7 +1,7 @@
-const transformer = require("./set");
+const transformer = require("./mapMutations");
 const { testTransformer } = require("../testUtils");
 
-describe("set", () => {
+describe("mapMutations", () => {
   test("Removes set calls", () => {
     testTransformer(
       transformer,
