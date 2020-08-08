@@ -1,11 +1,11 @@
-function getIn(j, object, array, fallback) {
-  const firstIdentifier = j.identifier(array[0].value);
+function getIn(j, object, key, fallback) {
+  const firstIdentifier = j.identifier(key[0].value);
 
-  if (array.length > 1) {
+  if (key.length > 1) {
     return getIn(
       j,
       j.optionalMemberExpression(object, firstIdentifier),
-      array.slice(1),
+      key.slice(1),
       fallback
     );
   }
@@ -26,13 +26,9 @@ function transformer(file, api) {
       arguments: { 0: { type: "ArrayExpression" } },
     })
     .forEach((path) => {
+      const [key, fallback] = path.node.arguments;
       j(path).replaceWith(
-        getIn(
-          j,
-          path.node.callee.object,
-          path.node.arguments[0].elements,
-          path.node.arguments[1]
-        )
+        getIn(j, path.node.callee.object, key.elements, fallback)
       );
     })
     .toSource();

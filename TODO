@@ -1,5 +1,3 @@
-- Remove .setIn(['x', 'y'], 'a')
-- Handel chained .set, .setIn, .updateIn calls
 - updateIn
 - Set
 - OrderedSet
