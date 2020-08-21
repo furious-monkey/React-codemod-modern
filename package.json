@@ -6,7 +6,8 @@
   "author": "Igor Mucsicska <mucsi_96@yahoo.com>",
   "license": "MIT",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "jscodeshift -t src/removeImmutable demo result"
   },
   "devDependencies": {
     "jscodeshift": "^0.10.0"
