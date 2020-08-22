@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "test": "jest",
-    "start": "jscodeshift -t src/removeImmutable demo result"
+    "start": "jscodeshift -t src/removeImmutable C:\\Users\\mucsi\\dev\\try-codemod\\demo"
   },
   "devDependencies": {
     "jscodeshift": "^0.10.0"
