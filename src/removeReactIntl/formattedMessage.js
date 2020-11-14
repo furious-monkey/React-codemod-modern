@@ -2,12 +2,12 @@ function transformer(file, api) {
   const j = api.jscodeshift;
   const root = j(file.source);
   const importDeclaration = root.find(j.ImportDeclaration, {
-    source: { value: "immutable" },
+    source: { value: "react-intl" },
   });
   const hasMultipleSpecifiers =
     importDeclaration.find(j.ImportSpecifier).length > 1;
   const importSpecifier = importDeclaration.find(j.ImportSpecifier, {
-    imported: { name: "fromJS" },
+    imported: { name: "FormattedMessage" },
   });
   const localName = importSpecifier.length
     ? importSpecifier.get(0).node.local.name
@@ -22,11 +22,16 @@ function transformer(file, api) {
   }
 
   return root
-    .find(j.CallExpression, {
-      callee: { name: localName },
+    .find(j.JSXElement, {
+      openingElement: { name: { name: localName } },
     })
     .forEach((path) => {
-      j(path).replaceWith(path.node.arguments[0]);
+      const idAttribute = j(path.node.openingElement).find(j.JSXAttribute, {
+        name: { name: "id" },
+      });
+      const id = idAttribute.length ? idAttribute.get(0).node.value : undefined;
+      console.log(id);
+      j(path).replaceWith(j.callExpression(j.identifier("t"), [id]));
     })
     .toSource();
 }

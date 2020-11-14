@@ -31,4 +31,16 @@ describe("fromJS", () => {
       `
     );
   });
+
+  test("Ignores files with no fromJS", () => {
+    testTransformer(
+      transformer,
+      `
+        const m = { a: true };
+      `,
+      `
+        const m = { a: true };
+      `
+    );
+  });
 });

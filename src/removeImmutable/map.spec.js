@@ -47,4 +47,16 @@ describe("map", () => {
       `
     );
   });
+
+  test("Ignores files with no Map", () => {
+    testTransformer(
+      transformer,
+      `
+        const m = { a: true };
+      `,
+      `
+        const m = { a: true };
+      `
+    );
+  });
 });

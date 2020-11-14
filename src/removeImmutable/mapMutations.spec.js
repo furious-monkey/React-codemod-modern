@@ -191,4 +191,20 @@ describe("mapMutations", () => {
       `
     );
   });
+
+  test("Ignores files with no map mutations", () => {
+    testTransformer(
+      transformer,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS({});
+      `,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS({});
+      `
+    );
+  });
 });

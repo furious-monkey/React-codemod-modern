@@ -65,4 +65,20 @@ describe("getIn", () => {
       `
     );
   });
+
+  test("Ignores files with no getIn", () => {
+    testTransformer(
+      transformer,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS({ a: { b: true } }).a;
+      `,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS({ a: { b: true } }).a;
+      `
+    );
+  });
 });

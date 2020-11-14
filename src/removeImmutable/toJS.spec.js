@@ -17,4 +17,20 @@ describe("toJS", () => {
       `
     );
   });
+
+  test("Ignores files with no toJS", () => {
+    testTransformer(
+      transformer,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS({ a: true });
+      `,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS({ a: true });
+      `
+    );
+  });
 });

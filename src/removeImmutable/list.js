@@ -9,7 +9,9 @@ function transformer(file, api) {
   const importSpecifier = importDeclaration.find(j.ImportSpecifier, {
     imported: { name: "List" },
   });
-  const localName = importSpecifier.get(0).node.local.name;
+  const localName = importSpecifier.length
+    ? importSpecifier.get(0).node.local.name
+    : undefined;
 
   if (localName) {
     if (hasMultipleSpecifiers) {

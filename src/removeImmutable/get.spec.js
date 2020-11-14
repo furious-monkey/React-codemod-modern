@@ -33,4 +33,20 @@ describe("get", () => {
       `
     );
   });
+
+  test("Ignores files with no get", () => {
+    testTransformer(
+      transformer,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS({ a: true }).a;
+      `,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS({ a: true }).a;
+      `
+    );
+  });
 });

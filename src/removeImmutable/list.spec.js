@@ -47,4 +47,16 @@ describe("list", () => {
       `
     );
   });
+
+  test("Ignores files with no List", () => {
+    testTransformer(
+      transformer,
+      `
+        const m = [];
+      `,
+      `
+        const m = [];
+      `
+    );
+  });
 });
