@@ -1,3 +1,5 @@
+const addImportDeclaration = require("./addImportDeclaration");
+
 function transformer(file, api) {
   const j = api.jscodeshift;
   const root = j(file.source);
@@ -19,6 +21,15 @@ function transformer(file, api) {
     } else {
       importDeclaration.remove();
     }
+
+    addImportDeclaration(
+      j,
+      root,
+      j.importDeclaration(
+        [j.importSpecifier(j.identifier("t"))],
+        j.literal("i18n")
+      )
+    );
   }
 
   return root
@@ -30,8 +41,13 @@ function transformer(file, api) {
         name: { name: "id" },
       });
       const id = idAttribute.length ? idAttribute.get(0).node.value : undefined;
-      console.log(id);
-      j(path).replaceWith(j.callExpression(j.identifier("t"), [id]));
+      const expression = j.callExpression(j.identifier("t"), [id]);
+
+      j(path).replaceWith(
+        path.parentPath.node.type !== "JSXElement"
+          ? expression
+          : j.jsxExpressionContainer(expression)
+      );
     })
     .toSource();
 }
