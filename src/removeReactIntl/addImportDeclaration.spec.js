@@ -5,16 +5,9 @@ function transformer(file, api) {
   const j = api.jscodeshift;
   const root = j(file.source);
 
-  addImportDeclaration(
-    j,
-    root,
-    j.importDeclaration(
-      [j.importSpecifier(j.identifier("t"))],
-      j.literal("i18n")
-    )
-  );
+  const fixSource = addImportDeclaration(j, root, "i18n", "t");
 
-  return root.toSource();
+  return fixSource(root.toSource());
 }
 
 describe("addImportDeclaration", () => {
@@ -24,14 +17,13 @@ describe("addImportDeclaration", () => {
       `
         import React from 'react';
 
-        const m = <FormattedMessage id="app.greeting" />;
+        console.log('test');
       `,
       `
         import React from 'react';
-
         import { t } from "i18n";
 
-        const m = <FormattedMessage id="app.greeting" />;
+        console.log('test');
       `
     );
   });
@@ -42,16 +34,14 @@ describe("addImportDeclaration", () => {
       `
         import React from 'react';
         import { t } from "i18n";
-        import { FormattedMessage } from "react-intl";
 
-        const m = <FormattedMessage id="app.greeting" />;
+        console.log('test');
     `,
       `
         import React from 'react';
         import { t } from "i18n";
-        import { FormattedMessage } from "react-intl";
 
-        const m = <FormattedMessage id="app.greeting" />;
+        console.log('test');
     `
     );
   });
@@ -61,21 +51,18 @@ describe("addImportDeclaration", () => {
       transformer,
       `
         import React from 'react';
-        import { FormattedMessage } from "react-intl";
 
         import style from './a.css';
 
-        const m = <FormattedMessage id="app.greeting" />;
+        console.log('test');
     `,
       `
         import React from 'react';
-        import { FormattedMessage } from "react-intl";
-
         import { t } from "i18n";
 
         import style from './a.css';
 
-        const m = <FormattedMessage id="app.greeting" />;
+        console.log('test');
     `
     );
   });

@@ -1,11 +1,16 @@
-function addImportDeclaration(j, root, newDeclaration) {
+function addImportDeclaration(j, root, source, specifier) {
   if (
     root.find(j.ImportDeclaration, {
-      source: { value: newDeclaration.source.value },
+      source: { value: source },
     }).length
   ) {
-    return;
+    return (source) => source;
   }
+
+  const newDeclaration = j.importDeclaration(
+    [j.importSpecifier(j.identifier(specifier))],
+    j.literal(source)
+  );
 
   const importDeclarations = root.find(j.ImportDeclaration);
   const lastDeclaration = importDeclarations.at(-1).paths()[0];
@@ -20,6 +25,11 @@ function addImportDeclaration(j, root, newDeclaration) {
       : lastDeclaration;
 
   declaration.insertAfter(newDeclaration);
+
+  const declarationSource = j(declaration).toSource();
+
+  return (source) =>
+    source.replace(`${declarationSource}\r\n\r\n`, `${declarationSource}\r\n`);
 }
 
 module.exports = addImportDeclaration;
