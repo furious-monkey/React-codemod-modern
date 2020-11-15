@@ -8,7 +8,7 @@
   "scripts": {
     "test": "jest",
     "start:immutable": "jscodeshift -t src/removeImmutable C:\\Users\\mucsi\\dev\\try-codemod\\demo\\immutable",
-    "start:react-intl": "jscodeshift -t src/removeImmutable C:\\Users\\mucsi\\dev\\try-codemod\\demo\\react-intl",
+    "start:react-intl": "jscodeshift -t src/removeReactIntl C:\\Users\\mucsi\\dev\\try-codemod\\demo\\react-intl",
     "start": "yarn start:immutable && yarn start:react-intl"
   },
   "devDependencies": {
