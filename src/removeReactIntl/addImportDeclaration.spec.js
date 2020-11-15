@@ -7,7 +7,7 @@ function transformer(file, api) {
 
   const fixSource = addImportDeclaration(j, root, "i18n", "t");
 
-  return fixSource(root.toSource());
+  return fixSource(root.toSource({ quote: "single" }));
 }
 
 describe("addImportDeclaration", () => {
@@ -21,7 +21,7 @@ describe("addImportDeclaration", () => {
       `,
       `
         import React from 'react';
-        import { t } from "i18n";
+        import { t } from 'i18n';
 
         console.log('test');
       `
@@ -33,13 +33,13 @@ describe("addImportDeclaration", () => {
       transformer,
       `
         import React from 'react';
-        import { t } from "i18n";
+        import { t } from 'i18n';
 
         console.log('test');
     `,
       `
         import React from 'react';
-        import { t } from "i18n";
+        import { t } from 'i18n';
 
         console.log('test');
     `
@@ -58,7 +58,7 @@ describe("addImportDeclaration", () => {
     `,
       `
         import React from 'react';
-        import { t } from "i18n";
+        import { t } from 'i18n';
 
         import style from './a.css';
 

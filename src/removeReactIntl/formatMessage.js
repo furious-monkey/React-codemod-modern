@@ -31,7 +31,7 @@ function transformer(file, api) {
 
         j(path).replaceWith(expression);
       })
-      .toSource()
+      .toSource({ quote: "single" })
   );
 }
 

@@ -8,13 +8,13 @@ describe("formatMessage", () => {
       `
         import React from 'react';
 
-        const m = formatMessage({ id: "app.greeting" });
+        const m = formatMessage({ id: 'app.greeting' });
       `,
       `
         import React from 'react';
-        import { t } from "i18n";
+        import { t } from 'i18n';
 
-        const m = t("app.greeting");
+        const m = t('app.greeting');
       `
     );
   });
@@ -25,13 +25,13 @@ describe("formatMessage", () => {
       `
         import React from 'react';
 
-        const m = formatMessage({ id: "app.greeting" }, { name: "Eric" });
+        const m = formatMessage({ id: 'app.greeting' }, { name: 'Eric' });
       `,
       `
         import React from 'react';
-        import { t } from "i18n";
+        import { t } from 'i18n';
 
-        const m = t("app.greeting", { name: "Eric" });
+        const m = t('app.greeting', { name: 'Eric' });
       `
     );
   });

@@ -7,15 +7,15 @@ describe("FormattedMessage", () => {
       transformer,
       `
         import React from 'react';
-        import { FormattedMessage } from "react-intl";
+        import { FormattedMessage } from 'react-intl';
 
         const m = <FormattedMessage id="app.greeting" />;
       `,
       `
         import React from 'react';
-        import { t } from "i18n";
+        import { t } from 'i18n';
 
-        const m = t("app.greeting");
+        const m = t('app.greeting');
       `
     );
   });
@@ -25,15 +25,15 @@ describe("FormattedMessage", () => {
       transformer,
       `
         import React from 'react';
-        import { FormattedMessage } from "react-intl";
+        import { FormattedMessage } from 'react-intl';
 
-        const m = <FormattedMessage id="app.greeting" values={{ name: "Eric" }} />;
+        const m = <FormattedMessage id="app.greeting" values={{ name: 'Eric' }} />;
       `,
       `
         import React from 'react';
-        import { t } from "i18n";
+        import { t } from 'i18n';
 
-        const m = t("app.greeting", { name: "Eric" });
+        const m = t('app.greeting', { name: 'Eric' });
       `
     );
   });
@@ -43,15 +43,15 @@ describe("FormattedMessage", () => {
       transformer,
       `
         import React from 'react';
-        import { FormattedMessage } from "react-intl";
+        import { FormattedMessage } from 'react-intl';
 
         const App = () => <div><FormattedMessage id="app.greeting" /></div>;
     `,
       `
         import React from 'react';
-        import { t } from "i18n";
+        import { t } from 'i18n';
 
-        const App = () => <div>{t("app.greeting")}</div>;
+        const App = () => <div>{t('app.greeting')}</div>;
     `
     );
   });
@@ -61,13 +61,13 @@ describe("FormattedMessage", () => {
       transformer,
       `
         import React from 'react';
-        import { a } from "react-intl";
+        import { a } from 'react-intl';
 
         const m = '1';
     `,
       `
         import React from 'react';
-        import { a } from "react-intl";
+        import { a } from 'react-intl';
 
         const m = '1';
     `

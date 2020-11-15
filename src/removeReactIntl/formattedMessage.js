@@ -59,7 +59,7 @@ function transformer(file, api) {
             : j.jsxExpressionContainer(expression)
         );
       })
-      .toSource()
+      .toSource({ quote: "single" })
   );
 }
 
