@@ -1,5 +1,35 @@
 const addImportDeclaration = require("./addImportDeclaration");
 
+function getId(j, jsxElement) {
+  const idAttribute = j(jsxElement.node.openingElement).find(j.JSXAttribute, {
+    name: { name: "id" },
+  });
+  const id = idAttribute.length ? idAttribute.get(0).node.value : undefined;
+
+  if (id.type === "Literal") {
+    return j.literal(id.value);
+  }
+
+  if (id.type === "JSXExpressionContainer") {
+    return id.expression;
+  }
+
+  return id;
+}
+
+function getValues(j, jsxElement) {
+  const valuesAttribute = j(jsxElement.node.openingElement).find(
+    j.JSXAttribute,
+    {
+      name: { name: "values" },
+    }
+  );
+  const values = valuesAttribute.length
+    ? valuesAttribute.get(0).node.value.expression
+    : undefined;
+  return values;
+}
+
 function transformer(file, api) {
   const j = api.jscodeshift;
   const root = j(file.source);
@@ -15,7 +45,11 @@ function transformer(file, api) {
     ? importSpecifier.get(0).node.local.name
     : undefined;
 
-  if (!localName) {
+  const elements = root.find(j.JSXElement, {
+    openingElement: { name: { name: localName } },
+  });
+
+  if (!localName || !elements.length) {
     return root.toSource();
   }
 
@@ -28,26 +62,10 @@ function transformer(file, api) {
   const fixSource = addImportDeclaration(j, root, "i18n", "t");
 
   return fixSource(
-    root
-      .find(j.JSXElement, {
-        openingElement: { name: { name: localName } },
-      })
+    elements
       .forEach((path) => {
-        const idAttribute = j(path.node.openingElement).find(j.JSXAttribute, {
-          name: { name: "id" },
-        });
-        const valuesAttribute = j(path.node.openingElement).find(
-          j.JSXAttribute,
-          {
-            name: { name: "values" },
-          }
-        );
-        const id = idAttribute.length
-          ? idAttribute.get(0).node.value
-          : undefined;
-        const values = valuesAttribute.length
-          ? valuesAttribute.get(0).node.value.expression
-          : undefined;
+        const id = getId(j, path);
+        const values = getValues(j, path);
         const expression = j.callExpression(
           j.identifier("t"),
           values ? [id, values] : [id]

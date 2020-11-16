@@ -20,6 +20,26 @@ describe("FormattedMessage", () => {
     );
   });
 
+  test("Removes FormattedMessage with id as expression", () => {
+    testTransformer(
+      transformer,
+      `
+        import React from 'react';
+        import { FormattedMessage } from 'react-intl';
+
+        const messageId = 'app.greeting';
+        const m = <FormattedMessage id={messageId} />;
+      `,
+      `
+        import React from 'react';
+        import { t } from 'i18n';
+
+        const messageId = 'app.greeting';
+        const m = t(messageId);
+      `
+    );
+  });
+
   test("Removes FormattedMessage with values", () => {
     testTransformer(
       transformer,
@@ -70,6 +90,24 @@ describe("FormattedMessage", () => {
         import { a } from 'react-intl';
 
         const m = '1';
+    `
+    );
+  });
+
+  test("Ignores files with FormattedMessage not rendered", () => {
+    testTransformer(
+      transformer,
+      `
+        import React from 'react';
+        import { FormattedMessage } from 'react-intl';
+
+        const m = FormattedMessage;
+    `,
+      `
+        import React from 'react';
+        import { FormattedMessage } from 'react-intl';
+
+        const m = FormattedMessage;
     `
     );
   });

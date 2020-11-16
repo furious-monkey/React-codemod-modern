@@ -1,6 +1,3 @@
-- Output single quotes
-- Fix case when FormattedMessage is imported but not used as component
-- Fix FormattedMessage with id as variable. Need to remove  extra {} 
 - Set
 - OrderedSet
 - OrderedMap
