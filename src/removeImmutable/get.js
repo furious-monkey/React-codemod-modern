@@ -1,3 +1,24 @@
+function getExpression(j, path) {
+  const value = path.node.arguments[0].value;
+
+  if (typeof value === "string") {
+    return j.memberExpression(
+      path.node.callee.object,
+      j.identifier(path.node.arguments[0].value)
+    );
+  }
+
+  if (typeof value === "number") {
+    return j.memberExpression(
+      path.node.callee.object,
+      j.numericLiteral(path.node.arguments[0].value),
+      true
+    );
+  }
+
+  throw new Error(`Cannot transform "get" on line ${path.node.loc.start.line}`);
+}
+
 function transformer(file, api) {
   const j = api.jscodeshift;
 
@@ -8,10 +29,8 @@ function transformer(file, api) {
     })
     .forEach((path) => {
       const hasFallback = path.node.arguments.length > 1;
-      const expression = j.memberExpression(
-        path.node.callee.object,
-        j.identifier(path.node.arguments[0].value)
-      );
+
+      const expression = getExpression(j, path);
 
       j(path).replaceWith(
         hasFallback

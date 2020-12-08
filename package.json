@@ -16,5 +16,9 @@
   },
   "dependencies": {
     "jest": "^26.2.2"
+  },
+  "resolutions": {
+    "@babel/core": "7.10.5",
+    "@babel/parser": "7.10.5"
   }
 }

@@ -18,7 +18,7 @@ describe("get", () => {
     );
   });
 
-  test("Provides fallback value", () => {
+  test("Supports string fallback value", () => {
     testTransformer(
       transformer,
       `
@@ -30,6 +30,38 @@ describe("get", () => {
         import { fromJS } from "immutable";
 
         const m = fromJS({ a: true }).a ?? 'fallback';
+      `
+    );
+  });
+
+  test("Supports null fallback value", () => {
+    testTransformer(
+      transformer,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS({ a: true }).get('a', null);
+      `,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS({ a: true }).a ?? null;
+      `
+    );
+  });
+
+  test("Supports arrays", () => {
+    testTransformer(
+      transformer,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS(['a']).get(0);
+      `,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS(['a'])[0];
       `
     );
   });
