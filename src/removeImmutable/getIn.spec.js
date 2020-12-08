@@ -34,7 +34,7 @@ describe("getIn", () => {
     );
   });
 
-  test("Hnadles array length 1", () => {
+  test("Handles array length 1", () => {
     testTransformer(
       transformer,
       `
@@ -50,7 +50,7 @@ describe("getIn", () => {
     );
   });
 
-  test("Hnadles array length 3", () => {
+  test("Handles array length 3", () => {
     testTransformer(
       transformer,
       `
@@ -62,6 +62,22 @@ describe("getIn", () => {
         import { fromJS } from "immutable";
 
         const m = fromJS({ a: { b: true } })?.a?.b.c;
+      `
+    );
+  });
+
+  test("Handles arrays", () => {
+    testTransformer(
+      transformer,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS({ a: { b: true } }).getIn(['a', 0, 'c']);
+      `,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS({ a: { b: true } })?.a?.[0].c;
       `
     );
   });
