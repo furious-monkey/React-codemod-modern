@@ -1,15 +1,27 @@
-function getIn(j, object, key, fallback) {
-  const value = key[0].value;
-  const computed = typeof value === "number";
-  const firstIdentifier = computed
-    ? j.numericLiteral(value)
-    : j.identifier(value);
+function getIn(j, object, key, line, fallback) {
+  const { type, value, name } = key[0];
+  const computed = typeof value === "number" || type === "Identifier";
+  const firstIdentifier =
+    type === "Literal" && typeof value === "number"
+      ? j.numericLiteral(value)
+      : j.identifier(type === "Identifier" ? name : value);
+
+  if (type === "Literal" && !["number", "string"].includes(typeof value)) {
+    throw new Error(`Cannot transform "getIn" on line ${line}`);
+  }
+
+  if (type === "Literal" && typeof value === "number" && value < 0) {
+    throw new Error(
+      `Negative index for "get" is not supported on line ${path.node.loc.start.line}`
+    );
+  }
 
   if (key.length > 1) {
     return getIn(
       j,
       j.optionalMemberExpression(object, firstIdentifier, computed),
       key.slice(1),
+      line,
       fallback
     );
   }
@@ -32,14 +44,14 @@ function transformer(file, api) {
     .forEach((path) => {
       const [key, fallback] = path.node.arguments;
 
-      if (!["string", "number"].includes(typeof key.elements[0].value)) {
-        throw new Error(
-          `Cannot transform "get" on line ${path.node.loc.start.line}`
-        );
-      }
-
       j(path).replaceWith(
-        getIn(j, path.node.callee.object, key.elements, fallback)
+        getIn(
+          j,
+          path.node.callee.object,
+          key.elements,
+          path.node.loc.start.line,
+          fallback
+        )
       );
     })
     .toSource();

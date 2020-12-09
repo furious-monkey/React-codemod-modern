@@ -1,17 +1,28 @@
 function getExpression(j, path) {
-  const value = path.node.arguments[0].value;
+  const { type, value, name } = path.node.arguments[0];
 
-  if (typeof value === "string") {
+  if (type === "Literal" && typeof value === "string") {
+    return j.memberExpression(path.node.callee.object, j.identifier(value));
+  }
+
+  if (type === "Literal" && typeof value === "number") {
+    if (value < 0) {
+      throw new Error(
+        `Negative index for "get" is not supported on line ${path.node.loc.start.line}`
+      );
+    }
+
     return j.memberExpression(
       path.node.callee.object,
-      j.identifier(path.node.arguments[0].value)
+      j.numericLiteral(value),
+      true
     );
   }
 
-  if (typeof value === "number") {
+  if (type === "Identifier") {
     return j.memberExpression(
       path.node.callee.object,
-      j.numericLiteral(path.node.arguments[0].value),
+      j.identifier(name),
       true
     );
   }
@@ -25,7 +36,6 @@ function transformer(file, api) {
   return j(file.source)
     .find(j.CallExpression, {
       callee: { property: { name: "get" } },
-      arguments: { 0: { type: "Literal" } },
     })
     .forEach((path) => {
       const hasFallback = path.node.arguments.length > 1;

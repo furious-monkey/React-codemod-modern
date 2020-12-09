@@ -82,6 +82,24 @@ describe("getIn", () => {
     );
   });
 
+  test("Handles dynamic values", () => {
+    testTransformer(
+      transformer,
+      `
+        import { fromJS } from "immutable";
+
+        const key = 'a';
+        const m = fromJS({ a: { b: true } }).getIn(['a', key, 'c']);
+      `,
+      `
+        import { fromJS } from "immutable";
+
+        const key = 'a';
+        const m = fromJS({ a: { b: true } })?.a?.[key].c;
+      `
+    );
+  });
+
   test("Ignores files with no getIn", () => {
     testTransformer(
       transformer,

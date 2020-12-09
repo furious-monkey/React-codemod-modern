@@ -50,6 +50,22 @@ describe("get", () => {
     );
   });
 
+  test("Supports fallback value inside logical expressions", () => {
+    testTransformer(
+      transformer,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS({ a: true }).get('a', null) > 0;
+      `,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS({ a: true }).a ?? null > 0;
+      `
+    );
+  });
+
   test("Supports arrays", () => {
     testTransformer(
       transformer,
@@ -62,6 +78,24 @@ describe("get", () => {
         import { fromJS } from "immutable";
 
         const m = fromJS(['a'])[0];
+      `
+    );
+  });
+
+  test("Supports dynamic keys", () => {
+    testTransformer(
+      transformer,
+      `
+        import { fromJS } from "immutable";
+
+        const key = 'a';
+        const m = fromJS(['a']).get(key);
+      `,
+      `
+        import { fromJS } from "immutable";
+
+        const key = 'a';
+        const m = fromJS(['a'])[key];
       `
     );
   });

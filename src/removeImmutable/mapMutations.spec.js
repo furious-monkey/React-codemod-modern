@@ -21,6 +21,27 @@ describe("mapMutations", () => {
     );
   });
 
+  test("Removes set calls with dynamic keys", () => {
+    testTransformer(
+      transformer,
+      `
+        import { fromJS } from "immutable";
+
+        const key = 'a';
+        const m = fromJS({}).set(key, false);
+      `,
+      `
+        import { fromJS } from "immutable";
+
+        const key = 'a';
+        const m = {
+                ...fromJS({}),
+                [key]: false
+        };
+      `
+    );
+  });
+
   test("Removes chained set calls", () => {
     testTransformer(
       transformer,
@@ -75,6 +96,27 @@ describe("mapMutations", () => {
         const m = {
                 ...fromJS({}),
                 a: false
+        };
+      `
+    );
+  });
+
+  test("Removes setIn calls with dynamic keys", () => {
+    testTransformer(
+      transformer,
+      `
+        import { fromJS } from "immutable";
+
+        const key = 'a';
+        const m = fromJS({}).setIn([key], false);
+      `,
+      `
+        import { fromJS } from "immutable";
+
+        const key = 'a';
+        const m = {
+                ...fromJS({}),
+                [key]: false
         };
       `
     );
