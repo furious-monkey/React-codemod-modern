@@ -11,4 +11,6 @@ function transformer(file, api) {
     .toSource();
 }
 
+transformer.name = "toArray";
+
 module.exports = transformer;

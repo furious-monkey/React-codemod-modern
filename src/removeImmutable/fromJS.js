@@ -31,4 +31,6 @@ function transformer(file, api) {
     .toSource();
 }
 
+transformer.name = "fromJS";
+
 module.exports = transformer;

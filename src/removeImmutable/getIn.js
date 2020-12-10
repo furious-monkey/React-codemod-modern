@@ -57,4 +57,6 @@ function transformer(file, api) {
     .toSource();
 }
 
+transformer.name = "getIn";
+
 module.exports = transformer;

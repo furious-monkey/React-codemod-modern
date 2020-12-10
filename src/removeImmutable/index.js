@@ -11,7 +11,7 @@ const transforms = [fromJs, get, getIn, list, map, mapMutations, toArray, toJS];
 
 module.exports = function (file, api, options) {
   let src = file.source;
-  transforms.forEach((transform, index) => {
+  transforms.forEach((transform) => {
     if (typeof src === "undefined") {
       return;
     }
@@ -24,7 +24,7 @@ module.exports = function (file, api, options) {
       }
     } catch (e) {
       console.log(
-        `Error in tranforming ${file.path} with transform id=${index}`
+        `Error in tranforming ${file.path} with transform "${transform.name}"`
       );
       console.log(src);
       console.log(e.stack);

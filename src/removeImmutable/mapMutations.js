@@ -190,4 +190,6 @@ function transformer(file, api) {
     .toSource();
 }
 
+transformer.name = "mapMutations";
+
 module.exports = transformer;

@@ -32,4 +32,6 @@ function transformer(file, api) {
     .toSource();
 }
 
+transformer.name = "list";
+
 module.exports = transformer;
