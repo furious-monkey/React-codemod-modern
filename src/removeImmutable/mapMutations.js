@@ -121,11 +121,11 @@ function transformLevel({ j, object, mutationCalls, level }) {
 
 function isSetCall(node) {
   return (
-    (node.callee.property &&
-      node.callee.property.name === "set" &&
-      node.arguments.length &&
-      node.arguments[0].type === "Literal") ||
-    node.arguments[0].type === "Identifier"
+    node.callee.property &&
+    node.callee.property.name === "set" &&
+    node.arguments.length &&
+    (node.arguments[0].type === "Literal" ||
+      node.arguments[0].type === "Identifier")
   );
 }
 
@@ -140,11 +140,11 @@ function isSetInCall(node) {
 
 function isUpdateCall(node) {
   return (
-    (node.callee.property &&
-      node.callee.property.name === "update" &&
-      node.arguments.length &&
-      node.arguments[0].type === "Literal") ||
-    node.arguments[0].type === "Identifier"
+    node.callee.property &&
+    node.callee.property.name === "update" &&
+    node.arguments.length &&
+    (node.arguments[0].type === "Literal" ||
+      node.arguments[0].type === "Identifier")
   );
 }
 
