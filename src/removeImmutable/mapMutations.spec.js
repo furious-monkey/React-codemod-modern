@@ -101,6 +101,52 @@ describe("mapMutations", () => {
     );
   });
 
+  test("Supports arrays", () => {
+    testTransformer(
+      transformer,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS([{ a: false }]).setIn([0, 'a'], false);
+      `,
+      `
+        import { fromJS } from "immutable";
+
+        const m = {
+                ...fromJS([{ a: false }]),
+
+                0: {
+                        ...fromJS([{ a: false }])[0],
+                        a: false
+                }
+        };
+      `
+    );
+  });
+
+  test("Supports arrays with string keys", () => {
+    testTransformer(
+      transformer,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS([{ a: false }]).setIn(['0', 'a'], false);
+      `,
+      `
+        import { fromJS } from "immutable";
+
+        const m = {
+                ...fromJS([{ a: false }]),
+
+                0: {
+                        ...fromJS([{ a: false }])[0],
+                        a: false
+                }
+        };
+      `
+    );
+  });
+
   test("Removes setIn calls with dynamic keys", () => {
     testTransformer(
       transformer,

@@ -1,16 +1,19 @@
 function getNestedIdentifier({ j, object, key }) {
   const { type, value, name } = key[0];
-  const computed = typeof value === "number" || type === "Identifier";
+  const parsedValue = parseInt(value);
+  const isIndex = Number.isFinite(parsedValue);
+
+  const computed = isIndex || type === "Identifier";
   const firstIdentifier =
-    type === "Literal" && typeof value === "number"
-      ? j.numericLiteral(value)
+    type === "Literal" && (typeof value === "number" || isIndex)
+      ? j.numericLiteral(parsedValue)
       : j.identifier(type === "Identifier" ? name : value);
 
   if (type === "Literal" && !["number", "string"].includes(typeof value)) {
     throw new Error(`Cannot transform "getIn" on line ${line}`);
   }
 
-  if (type === "Literal" && typeof value === "number" && value < 0) {
+  if (type === "Literal" && isIndex && value < 0) {
     throw new Error(
       `Negative index for "get" is not supported on line ${path.node.loc.start.line}`
     );
@@ -95,7 +98,9 @@ function transformLevel({ j, object, mutationCalls, level }) {
   const properties = getProperties({ j, object, mutationCalls, level }).map(
     ({ key, value, propertyName, computed }) => {
       const result = j.objectProperty(
-        j.identifier(propertyName),
+        typeof propertyName === "number"
+          ? j.numericLiteral(propertyName)
+          : j.identifier(propertyName),
         transformValue({ j, key, level, object, mutationCalls, value })
       );
 

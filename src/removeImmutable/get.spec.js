@@ -82,6 +82,22 @@ describe("get", () => {
     );
   });
 
+  test("Supports arrays with sring keys", () => {
+    testTransformer(
+      transformer,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS(['a']).get('0');
+      `,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS(['a'])[0];
+      `
+    );
+  });
+
   test("Supports dynamic keys", () => {
     testTransformer(
       transformer,

@@ -82,6 +82,22 @@ describe("getIn", () => {
     );
   });
 
+  test("Handles arrays with string keys", () => {
+    testTransformer(
+      transformer,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS({ a: { b: true } }).getIn(['a', '0', 'c']);
+      `,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS({ a: { b: true } })?.a?.[0].c;
+      `
+    );
+  });
+
   test("Handles dynamic values", () => {
     testTransformer(
       transformer,

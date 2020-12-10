@@ -1,11 +1,13 @@
 function getExpression(j, path) {
   const { type, value, name } = path.node.arguments[0];
+  const parsedValue = parseInt(value);
+  const isIndex = Number.isFinite(parsedValue);
 
-  if (type === "Literal" && typeof value === "string") {
+  if (type === "Literal" && typeof value === "string" && !isIndex) {
     return j.memberExpression(path.node.callee.object, j.identifier(value));
   }
 
-  if (type === "Literal" && typeof value === "number") {
+  if (type === "Literal" && isIndex) {
     if (value < 0) {
       throw new Error(
         `Negative index for "get" is not supported on line ${path.node.loc.start.line}`
@@ -14,7 +16,7 @@ function getExpression(j, path) {
 
     return j.memberExpression(
       path.node.callee.object,
-      j.numericLiteral(value),
+      j.numericLiteral(parsedValue),
       true
     );
   }
