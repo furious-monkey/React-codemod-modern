@@ -23,7 +23,9 @@ module.exports = function (file, api, options) {
         src = nextSrc;
       }
     } catch (e) {
-      console.log(`Error in tranforming ${file} with transform id=${index}`);
+      console.log(
+        `Error in tranforming ${file.path} with transform id=${index}`
+      );
       console.log(src);
       console.log(e.stack);
     }
