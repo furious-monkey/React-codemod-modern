@@ -29,7 +29,7 @@ describe("get", () => {
       `
         import { fromJS } from "immutable";
 
-        const m = fromJS({ a: true }).a ?? 'fallback';
+        const m = (fromJS({ a: true }).a ?? 'fallback');
       `
     );
   });
@@ -45,7 +45,7 @@ describe("get", () => {
       `
         import { fromJS } from "immutable";
 
-        const m = fromJS({ a: true }).a ?? null;
+        const m = (fromJS({ a: true }).a ?? null);
       `
     );
   });
@@ -56,12 +56,12 @@ describe("get", () => {
       `
         import { fromJS } from "immutable";
 
-        const m = fromJS({ a: true }).get('a', null) > 0;
+        const m = fromJS({ a: true }).get('a', null);
       `,
       `
         import { fromJS } from "immutable";
 
-        const m = fromJS({ a: true }).a ?? null > 0;
+        const m = (fromJS({ a: true }).a ?? null);
       `
     );
   });

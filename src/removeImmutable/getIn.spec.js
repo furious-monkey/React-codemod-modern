@@ -29,7 +29,7 @@ describe("getIn", () => {
       `
       import { fromJS } from "immutable";
 
-      const m = fromJS({ a: { b: true } })?.a.b ?? 'fallback';
+      const m = (fromJS({ a: { b: true } })?.a.b ?? 'fallback');
       `
     );
   });

@@ -46,8 +46,14 @@ function transformer(file, api) {
 
       j(path).replaceWith(
         hasFallback
-          ? j.logicalExpression("??", expression, path.node.arguments[1])
-          : expression
+          ? j.parenthesizedExpression(
+              j.logicalExpression(
+                "??",
+                getExpression(j, path),
+                path.node.arguments[1]
+              )
+            )
+          : getExpression(j, path)
       );
     })
     .toSource();

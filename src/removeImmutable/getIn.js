@@ -32,7 +32,7 @@ function getIn(j, object, key, line, fallback) {
   const expression = j.memberExpression(object, firstIdentifier, computed);
 
   return fallback
-    ? j.logicalExpression("??", expression, fallback)
+    ? j.parenthesizedExpression(j.logicalExpression("??", expression, fallback))
     : expression;
 }
 
