@@ -104,14 +104,14 @@ describe("get", () => {
       `
         import { fromJS } from "immutable";
 
-        const key = 'a';
-        const m = fromJS(['a']).get(key);
+        const key = { name: 'a' }
+        const m = fromJS(['a']).get(key.name);
       `,
       `
         import { fromJS } from "immutable";
 
-        const key = 'a';
-        const m = fromJS(['a'])[key];
+        const key = { name: 'a' }
+        const m = fromJS(['a'])[key.name];
       `
     );
   });

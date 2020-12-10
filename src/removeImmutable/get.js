@@ -1,5 +1,5 @@
 function getExpression(j, path) {
-  const { type, value, name } = path.node.arguments[0];
+  const { type, value } = path.node.arguments[0];
   const parsedValue = parseInt(value);
   const isIndex = Number.isFinite(parsedValue);
 
@@ -21,15 +21,11 @@ function getExpression(j, path) {
     );
   }
 
-  if (type === "Identifier") {
-    return j.memberExpression(
-      path.node.callee.object,
-      j.identifier(name),
-      true
-    );
-  }
-
-  throw new Error(`Cannot transform "get" on line ${path.node.loc.start.line}`);
+  return j.memberExpression(
+    path.node.callee.object,
+    path.node.arguments[0],
+    true
+  );
 }
 
 function transformer(file, api) {
@@ -47,13 +43,9 @@ function transformer(file, api) {
       j(path).replaceWith(
         hasFallback
           ? j.parenthesizedExpression(
-              j.logicalExpression(
-                "??",
-                getExpression(j, path),
-                path.node.arguments[1]
-              )
+              j.logicalExpression("??", expression, path.node.arguments[1])
             )
-          : getExpression(j, path)
+          : expression
       );
     })
     .toSource();

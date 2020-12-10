@@ -1,23 +1,31 @@
-function getIn(j, object, key, line, fallback) {
-  const { type, value, name } = key[0];
+function getFirstIdentifier({ j, key, line }) {
+  const { type, value } = key[0];
   const parsedValue = parseInt(value);
   const isIndex = Number.isFinite(parsedValue);
 
-  const computed = isIndex || type === "Identifier";
-  const firstIdentifier =
-    type === "Literal" && (typeof value === "number" || isIndex)
-      ? j.numericLiteral(parsedValue)
-      : j.identifier(type === "Identifier" ? name : value);
-
-  if (type === "Literal" && !["number", "string"].includes(typeof value)) {
-    throw new Error(`Cannot transform "getIn" on line ${line}`);
+  if (type === "Literal" && typeof value === "string" && !isIndex) {
+    return { firstIdentifier: j.identifier(value), computed: false };
   }
 
-  if (type === "Literal" && isIndex && value < 0) {
-    throw new Error(
-      `Negative index for "get" is not supported on line ${path.node.loc.start.line}`
-    );
+  if (type === "Literal" && isIndex) {
+    if (value < 0) {
+      throw new Error(
+        `Negative index for "getIn" is not supported on line ${line}`
+      );
+    }
+
+    return { firstIdentifier: j.numericLiteral(parsedValue), computed: true };
   }
+
+  return { firstIdentifier: key[0], computed: true };
+}
+
+function getIn(j, object, key, line, fallback) {
+  const { firstIdentifier, computed } = getFirstIdentifier({
+    j,
+    key,
+    line,
+  });
 
   if (key.length > 1) {
     return getIn(

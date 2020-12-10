@@ -1,23 +1,28 @@
-function getNestedIdentifier({ j, object, key }) {
-  const { type, value, name } = key[0];
+function getFirstIdentifier({ j, key }) {
+  const { type, value } = key[0];
   const parsedValue = parseInt(value);
   const isIndex = Number.isFinite(parsedValue);
 
-  const computed = isIndex || type === "Identifier";
-  const firstIdentifier =
-    type === "Literal" && (typeof value === "number" || isIndex)
-      ? j.numericLiteral(parsedValue)
-      : j.identifier(type === "Identifier" ? name : value);
-
-  if (type === "Literal" && !["number", "string"].includes(typeof value)) {
-    throw new Error(`Cannot transform "getIn" on line ${line}`);
+  if (type === "Literal" && typeof value === "string" && !isIndex) {
+    return { firstIdentifier: j.identifier(value), computed: false };
   }
 
-  if (type === "Literal" && isIndex && value < 0) {
-    throw new Error(
-      `Negative index for "get" is not supported on line ${path.node.loc.start.line}`
-    );
+  if (type === "Literal" && isIndex) {
+    if (value < 0) {
+      throw new Error(`Negative index is not supported`);
+    }
+
+    return { firstIdentifier: j.numericLiteral(parsedValue), computed: true };
   }
+
+  return { firstIdentifier: key[0], computed: true };
+}
+
+function getNestedIdentifier({ j, object, key }) {
+  const { firstIdentifier, computed } = getFirstIdentifier({
+    j,
+    key,
+  });
 
   if (key.length > 1) {
     return getNestedIdentifier({
@@ -65,42 +70,113 @@ function getNewValue({ j, mutationCall, value, key, object }) {
   return j.callExpression(value, args);
 }
 
+function getPropertyKey({ key, level }) {
+  if (key.type === "ArrayExpression") {
+    const { type, value } = key.elements[level];
+    const parsedValue = parseInt(value);
+    const isIndex = Number.isFinite(parsedValue);
+
+    if (type === "Literal" && typeof value === "string" && !isIndex) {
+      return value;
+    }
+
+    if (type === "Literal" && isIndex) {
+      return parsedValue;
+    }
+
+    return key.elements[level];
+  }
+
+  const { type, value } = key;
+
+  const parsedValue = parseInt(value);
+  const isIndex = Number.isFinite(parsedValue);
+
+  if (type === "Literal" && typeof value === "string" && !isIndex) {
+    return value;
+  }
+
+  if (type === "Literal" && isIndex) {
+    return parsedValue;
+  }
+
+  return key;
+}
+
+function transformProperty({ j, key, level }) {
+  if (key.type === "ArrayExpression") {
+    const { type, value } = key.elements[level];
+    const parsedValue = parseInt(value);
+    const isIndex = Number.isFinite(parsedValue);
+
+    if (type === "Literal" && typeof value === "string" && !isIndex) {
+      return j.identifier(value);
+    }
+
+    if (type === "Literal" && isIndex) {
+      if (value < 0) {
+        throw new Error(
+          `Negative index for "get" is not supported on line ${path.node.loc.start.line}`
+        );
+      }
+
+      return j.numericLiteral(parsedValue);
+    }
+
+    return key.elements[level];
+  }
+
+  const { type, value } = key;
+
+  const parsedValue = parseInt(value);
+  const isIndex = Number.isFinite(parsedValue);
+
+  if (type === "Literal" && typeof value === "string" && !isIndex) {
+    return j.identifier(value);
+  }
+
+  if (type === "Literal" && isIndex) {
+    if (value < 0) {
+      throw new Error(
+        `Negative index for "get" is not supported on line ${path.node.loc.start.line}`
+      );
+    }
+
+    return j.numericLiteral(parsedValue);
+  }
+
+  return key;
+}
+
 function getProperties({ j, object, mutationCalls, level }) {
   return mutationCalls
     .map((path) => {
       const [key, value] = path.node.arguments;
-      const computed =
+      const literal =
         key.type === "ArrayExpression"
-          ? key.elements[level].type === "Identifier"
-          : key.type === "Identifier";
+          ? key.elements[level].type === "Literal" &&
+            !Number.isFinite(parseInt(key.elements[level].value))
+          : key.type === "Literal" && !Number.isFinite(parseInt(key.value));
 
       return {
         key,
         value: getNewValue({ j, mutationCall: path, value, key, object }),
-        propertyName:
-          key.type === "ArrayExpression"
-            ? key.elements[level].type === "Literal"
-              ? key.elements[level].value
-              : key.elements[level].name
-            : key.type === "Literal"
-            ? key.value
-            : key.name,
-        computed,
+        level,
+        propertyId: getPropertyKey({ key, level }),
+        computed: !literal,
       };
     })
     .filter(
-      ({ propertyName }, index, array) =>
-        array.findIndex((item) => item.propertyName === propertyName) === index
+      ({ propertyId }, index, array) =>
+        array.findIndex((item) => item.propertyId === propertyId) === index
     );
 }
 
 function transformLevel({ j, object, mutationCalls, level }) {
   const properties = getProperties({ j, object, mutationCalls, level }).map(
-    ({ key, value, propertyName, computed }) => {
+    ({ key, value, computed }) => {
       const result = j.objectProperty(
-        typeof propertyName === "number"
-          ? j.numericLiteral(propertyName)
-          : j.identifier(propertyName),
+        transformProperty({ j, key, level }),
         transformValue({ j, key, level, object, mutationCalls, value })
       );
 

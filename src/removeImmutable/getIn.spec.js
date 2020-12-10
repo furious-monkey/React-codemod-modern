@@ -104,14 +104,14 @@ describe("getIn", () => {
       `
         import { fromJS } from "immutable";
 
-        const key = 'a';
-        const m = fromJS({ a: { b: true } }).getIn(['a', key, 'c']);
+        const key = { name: 'a' };
+        const m = fromJS({ a: { b: true } }).getIn(['a', key.name, 'c']);
       `,
       `
         import { fromJS } from "immutable";
 
-        const key = 'a';
-        const m = fromJS({ a: { b: true } })?.a?.[key].c;
+        const key = { name: 'a' };
+        const m = fromJS({ a: { b: true } })?.a?.[key.name].c;
       `
     );
   });

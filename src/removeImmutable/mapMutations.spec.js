@@ -115,7 +115,7 @@ describe("mapMutations", () => {
         const m = {
                 ...fromJS([{ a: false }]),
 
-                0: {
+                [0]: {
                         ...fromJS([{ a: false }])[0],
                         a: false
                 }
@@ -138,7 +138,7 @@ describe("mapMutations", () => {
         const m = {
                 ...fromJS([{ a: false }]),
 
-                0: {
+                [0]: {
                         ...fromJS([{ a: false }])[0],
                         a: false
                 }
@@ -204,6 +204,35 @@ describe("mapMutations", () => {
                 a: {
                         ...fromJS({}).a,
                         b: false
+                }
+        };
+      `
+    );
+  });
+
+  test("Removes setIn calls with deep path and dynamic variables", () => {
+    testTransformer(
+      transformer,
+      `
+        import { fromJS } from "immutable";
+
+        const key = { name: 'b' };
+        const m = fromJS({}).setIn(['a', key.name, 'c'], false);
+      `,
+      `
+        import { fromJS } from "immutable";
+
+        const key = { name: 'b' };
+        const m = {
+                ...fromJS({}),
+
+                a: {
+                        ...fromJS({}).a,
+
+                        [key.name]: {
+                                ...fromJS({})?.a[key.name],
+                                c: false
+                        }
                 }
         };
       `
