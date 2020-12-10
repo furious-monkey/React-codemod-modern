@@ -32,6 +32,6 @@ function transformer(file, api) {
     .toSource();
 }
 
-transformer.name = "list";
+transformer.displayName = "list";
 
 module.exports = transformer;

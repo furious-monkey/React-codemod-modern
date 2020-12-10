@@ -32,6 +32,6 @@ function transformer(file, api) {
     .toSource();
 }
 
-transformer.name = "map";
+transformer.displayName = "map";
 
 module.exports = transformer;

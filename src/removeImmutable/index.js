@@ -24,7 +24,7 @@ module.exports = function (file, api, options) {
       }
     } catch (e) {
       console.log(
-        `Error in tranforming ${file.path} with transform "${transform.name}"`
+        `Error in tranforming ${file.path} with transform "${transform.displayName}"`
       );
       console.log(src);
       console.log(e.stack);

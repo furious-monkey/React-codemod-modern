@@ -11,6 +11,6 @@ function transformer(file, api) {
     .toSource();
 }
 
-transformer.name = "toJS";
+transformer.displayName = "toJS";
 
 module.exports = transformer;
