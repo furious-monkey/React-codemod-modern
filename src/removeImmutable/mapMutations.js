@@ -3,11 +3,11 @@ function getFirstIdentifier({ j, key }) {
   const parsedValue = parseInt(value);
   const isIndex = Number.isFinite(parsedValue);
 
-  if (type === "Literal" && typeof value === "string" && !isIndex) {
+  if (type === "StringLiteral" && typeof value === "string" && !isIndex) {
     return { firstIdentifier: j.identifier(value), computed: false };
   }
 
-  if (type === "Literal" && isIndex) {
+  if (["NumericLiteral", "StringLiteral"].includes(type) && isIndex) {
     if (value < 0) {
       throw new Error(`Negative index is not supported`);
     }
@@ -76,11 +76,11 @@ function getPropertyKey({ key, level }) {
     const parsedValue = parseInt(value);
     const isIndex = Number.isFinite(parsedValue);
 
-    if (type === "Literal" && typeof value === "string" && !isIndex) {
+    if (type === "StringLiteral" && typeof value === "string" && !isIndex) {
       return value;
     }
 
-    if (type === "Literal" && isIndex) {
+    if (["NumericLiteral", "StringLiteral"].includes(type) && isIndex) {
       return parsedValue;
     }
 
@@ -92,11 +92,11 @@ function getPropertyKey({ key, level }) {
   const parsedValue = parseInt(value);
   const isIndex = Number.isFinite(parsedValue);
 
-  if (type === "Literal" && typeof value === "string" && !isIndex) {
+  if (type === "StringLiteral" && typeof value === "string" && !isIndex) {
     return value;
   }
 
-  if (type === "Literal" && isIndex) {
+  if (["NumericLiteral", "StringLiteral"].includes(type) && isIndex) {
     return parsedValue;
   }
 
@@ -109,11 +109,11 @@ function transformProperty({ j, key, level }) {
     const parsedValue = parseInt(value);
     const isIndex = Number.isFinite(parsedValue);
 
-    if (type === "Literal" && typeof value === "string" && !isIndex) {
+    if (type === "StringLiteral" && typeof value === "string" && !isIndex) {
       return j.identifier(value);
     }
 
-    if (type === "Literal" && isIndex) {
+    if (["NumericLiteral", "StringLiteral"].includes(type) && isIndex) {
       if (value < 0) {
         throw new Error(
           `Negative index for "get" is not supported on line ${path.node.loc.start.line}`
@@ -131,11 +131,11 @@ function transformProperty({ j, key, level }) {
   const parsedValue = parseInt(value);
   const isIndex = Number.isFinite(parsedValue);
 
-  if (type === "Literal" && typeof value === "string" && !isIndex) {
+  if (type === "StringLiteral" && typeof value === "string" && !isIndex) {
     return j.identifier(value);
   }
 
-  if (type === "Literal" && isIndex) {
+  if (["NumericLiteral", "StringLiteral"].includes(type) && isIndex) {
     if (value < 0) {
       throw new Error(
         `Negative index for "get" is not supported on line ${path.node.loc.start.line}`
@@ -154,9 +154,10 @@ function getProperties({ j, object, mutationCalls, level }) {
       const [key, value] = path.node.arguments;
       const literal =
         key.type === "ArrayExpression"
-          ? key.elements[level].type === "Literal" &&
+          ? key.elements[level].type === "StringLiteral" &&
             !Number.isFinite(parseInt(key.elements[level].value))
-          : key.type === "Literal" && !Number.isFinite(parseInt(key.value));
+          : key.type === "StringLiteral" &&
+            !Number.isFinite(parseInt(key.value));
 
       return {
         key,
@@ -205,8 +206,9 @@ function isSetCall(node) {
     node.callee.property &&
     node.callee.property.name === "set" &&
     node.arguments.length &&
-    (node.arguments[0].type === "Literal" ||
-      node.arguments[0].type === "Identifier")
+    ["StringLiteral", "NumericLiteral", "Identifier"].includes(
+      node.arguments[0].type
+    )
   );
 }
 
@@ -224,8 +226,9 @@ function isUpdateCall(node) {
     node.callee.property &&
     node.callee.property.name === "update" &&
     node.arguments.length &&
-    (node.arguments[0].type === "Literal" ||
-      node.arguments[0].type === "Identifier")
+    ["StringLiteral", "NumericLiteral", "Identifier"].includes(
+      node.arguments[0].type
+    )
   );
 }
 

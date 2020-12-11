@@ -3,11 +3,11 @@ function getFirstIdentifier({ j, key, line }) {
   const parsedValue = parseInt(value);
   const isIndex = Number.isFinite(parsedValue);
 
-  if (type === "Literal" && typeof value === "string" && !isIndex) {
+  if (type === "StringLiteral" && typeof value === "string" && !isIndex) {
     return { firstIdentifier: j.identifier(value), computed: false };
   }
 
-  if (type === "Literal" && isIndex) {
+  if (["NumericLiteral", "StringLiteral"].includes(type) && isIndex) {
     if (value < 0) {
       throw new Error(
         `Negative index for "getIn" is not supported on line ${line}`

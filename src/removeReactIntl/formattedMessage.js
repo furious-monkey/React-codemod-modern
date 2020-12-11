@@ -6,7 +6,7 @@ function getId(j, jsxElement) {
   });
   const id = idAttribute.length ? idAttribute.get(0).node.value : undefined;
 
-  if (id.type === "Literal") {
+  if (id.type === "StringLiteral") {
     return j.literal(id.value);
   }
 

@@ -3,11 +3,11 @@ function getExpression(j, path) {
   const parsedValue = parseInt(value);
   const isIndex = Number.isFinite(parsedValue);
 
-  if (type === "Literal" && typeof value === "string" && !isIndex) {
+  if (type === "StringLiteral" && !isIndex) {
     return j.memberExpression(path.node.callee.object, j.identifier(value));
   }
 
-  if (type === "Literal" && isIndex) {
+  if (["NumericLiteral", "StringLiteral"].includes(type) && isIndex) {
     if (value < 0) {
       throw new Error(
         `Negative index for "get" is not supported on line ${path.node.loc.start.line}`
