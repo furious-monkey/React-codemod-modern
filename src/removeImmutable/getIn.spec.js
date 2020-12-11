@@ -13,7 +13,7 @@ describe("getIn", () => {
       `
         import { fromJS } from "immutable";
 
-        const m = fromJS({ a: { b: true } })?.a.b;
+        const m = fromJS({ a: { b: true } }).a?.b;
       `
     );
   });
@@ -29,7 +29,7 @@ describe("getIn", () => {
       `
       import { fromJS } from "immutable";
 
-      const m = (fromJS({ a: { b: true } })?.a.b ?? 'fallback');
+      const m = (fromJS({ a: { b: true } }).a?.b ?? 'fallback');
       `
     );
   });
@@ -61,7 +61,7 @@ describe("getIn", () => {
       `
         import { fromJS } from "immutable";
 
-        const m = fromJS({ a: { b: true } })?.a?.b.c;
+        const m = fromJS({ a: { b: true } }).a?.b?.c;
       `
     );
   });
@@ -77,7 +77,7 @@ describe("getIn", () => {
       `
         import { fromJS } from "immutable";
 
-        const m = fromJS({ a: { b: true } })?.a?.[0].c;
+        const m = fromJS({ a: { b: true } }).a?.[0]?.c;
       `
     );
   });
@@ -93,7 +93,7 @@ describe("getIn", () => {
       `
         import { fromJS } from "immutable";
 
-        const m = fromJS({ a: { b: true } })?.a?.[0].c;
+        const m = fromJS({ a: { b: true } }).a?.[0]?.c;
       `
     );
   });
@@ -111,7 +111,7 @@ describe("getIn", () => {
         import { fromJS } from "immutable";
 
         const key = { name: 'a' };
-        const m = fromJS({ a: { b: true } })?.a?.[key.name].c;
+        const m = fromJS({ a: { b: true } }).a?.[key.name]?.c;
       `
     );
   });

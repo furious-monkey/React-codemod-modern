@@ -20,24 +20,20 @@ function getFirstIdentifier({ j, key, line }) {
   return { firstIdentifier: key[0], computed: true };
 }
 
-function getIn(j, object, key, line, fallback) {
+function getIn(j, object, depth, key, line, fallback) {
   const { firstIdentifier, computed } = getFirstIdentifier({
     j,
     key,
     line,
   });
 
-  if (key.length > 1) {
-    return getIn(
-      j,
-      j.optionalMemberExpression(object, firstIdentifier, computed),
-      key.slice(1),
-      line,
-      fallback
-    );
-  }
+  const expression = depth
+    ? j.optionalMemberExpression(object, firstIdentifier, computed)
+    : j.memberExpression(object, firstIdentifier, computed);
 
-  const expression = j.memberExpression(object, firstIdentifier, computed);
+  if (key.length > 1) {
+    return getIn(j, expression, depth + 1, key.slice(1), line, fallback);
+  }
 
   return fallback
     ? j.parenthesizedExpression(j.logicalExpression("??", expression, fallback))
@@ -59,6 +55,7 @@ function transformer(file, api) {
         getIn(
           j,
           path.node.callee.object,
+          0,
           key.elements,
           path.node.loc.start.line,
           fallback

@@ -18,21 +18,26 @@ function getFirstIdentifier({ j, key }) {
   return { firstIdentifier: key[0], computed: true };
 }
 
-function getNestedIdentifier({ j, object, key }) {
+function getNestedIdentifier({ j, object, depth, key }) {
   const { firstIdentifier, computed } = getFirstIdentifier({
     j,
     key,
   });
 
+  const expression = depth
+    ? j.optionalMemberExpression(object, firstIdentifier, computed)
+    : j.memberExpression(object, firstIdentifier, computed);
+
   if (key.length > 1) {
     return getNestedIdentifier({
       j,
-      object: j.optionalMemberExpression(object, firstIdentifier, computed),
+      object: expression,
+      depth: depth + 1,
       key: key.slice(1),
     });
   }
 
-  return j.memberExpression(object, firstIdentifier, computed);
+  return expression;
 }
 
 function transformValue({ j, key, level, object, mutationCalls, value }) {
@@ -63,6 +68,7 @@ function getNewValue({ j, mutationCall, value, key, object }) {
     getNestedIdentifier({
       j,
       object,
+      depth: 0,
       key: key.type === "ArrayExpression" ? key.elements : [key],
     }),
   ];
@@ -194,6 +200,7 @@ function transformLevel({ j, object, mutationCalls, level }) {
         : getNestedIdentifier({
             j,
             object,
+            depth: 0,
             key: mutationCalls[0].node.arguments[0].elements.slice(0, level),
           })
     ),

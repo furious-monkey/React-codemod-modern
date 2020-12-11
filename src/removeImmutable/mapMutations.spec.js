@@ -230,7 +230,7 @@ describe("mapMutations", () => {
                         ...fromJS({}).a,
 
                         [key.name]: {
-                                ...fromJS({})?.a[key.name],
+                                ...fromJS({}).a?.[key.name],
                                 c: false
                         }
                 }
@@ -255,7 +255,7 @@ describe("mapMutations", () => {
 
                 a: {
                         ...fromJS({}).a,
-                        b: (val => 2 * val)(fromJS({})?.a.b)
+                        b: (val => 2 * val)(fromJS({}).a?.b)
                 }
         };
       `
@@ -298,10 +298,10 @@ describe("mapMutations", () => {
             ...fromJS({}).f,
 
             g: {
-              ...fromJS({})?.f.g,
+              ...fromJS({}).f?.g,
               h: 5,
               i: 6,
-              k: (val => 3 * val)(fromJS({})?.f?.g.k)
+              k: (val => 3 * val)(fromJS({}).f?.g?.k)
             }
           }
         }
