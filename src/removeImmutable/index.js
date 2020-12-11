@@ -7,7 +7,17 @@ const mapMutations = require("./mapMutations");
 const toArray = require("./toArray");
 const toJS = require("./toJS");
 
-const transforms = [fromJs, get, getIn, list, map, mapMutations, toArray, toJS];
+const transforms = [
+  fromJs,
+  get,
+  getIn,
+  listOf,
+  list,
+  map,
+  mapMutations,
+  toArray,
+  toJS,
+];
 
 module.exports = function (file, api, options) {
   let src = file.source;
