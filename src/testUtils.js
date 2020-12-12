@@ -5,7 +5,7 @@ function testTransformer(transform, input, output) {
     {
       source: input,
     },
-    { jscodeshift: jscodeshift.withParser("babylon") }
+    { jscodeshift: jscodeshift.withParser("tsx") }
   ).replace(/\r\n/g, "\n");
   expect(actual).toEqual(output);
 }

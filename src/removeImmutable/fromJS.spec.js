@@ -37,9 +37,21 @@ describe("fromJS", () => {
       transformer,
       `
         const m = { a: true };
+
+        export enum Fruit {
+          Apple,
+          Orange,
+          Banana
+        }
       `,
       `
         const m = { a: true };
+
+        export enum Fruit {
+          Apple,
+          Orange,
+          Banana
+        }
       `
     );
   });

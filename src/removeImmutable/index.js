@@ -45,6 +45,6 @@ module.exports = function (file, api, options) {
   return src;
 };
 
-module.exports.parser = "babylon";
+module.exports.parser = "tsx";
 // module.exports.parserConfig = resolve(__dirname, "../parserConfig.json");
 // module.exports.extensions = ["js", "ts", "tsx"];
