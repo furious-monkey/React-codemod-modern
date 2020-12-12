@@ -20,7 +20,7 @@ function getFirstIdentifier({ j, key, line }) {
   return { firstIdentifier: key[0], computed: true };
 }
 
-function getIn(j, object, depth, key, line, fallback) {
+function hasIn(j, object, depth, key, line) {
   const { firstIdentifier, computed } = getFirstIdentifier({
     j,
     key,
@@ -32,12 +32,10 @@ function getIn(j, object, depth, key, line, fallback) {
     : j.memberExpression(object, firstIdentifier, computed);
 
   if (key.length > 1) {
-    return getIn(j, expression, depth + 1, key.slice(1), line, fallback);
+    return hasIn(j, expression, depth + 1, key.slice(1), line);
   }
 
-  return fallback
-    ? j.parenthesizedExpression(j.logicalExpression("??", expression, fallback))
-    : expression;
+  return j.unaryExpression("!", j.unaryExpression("!", expression, true), true);
 }
 
 function transformer(file, api) {
@@ -45,7 +43,7 @@ function transformer(file, api) {
 
   return j(file.source)
     .find(j.CallExpression, {
-      callee: { property: { name: "getIn" } },
+      callee: { property: { name: "hasIn" } },
       arguments: { 0: { type: "ArrayExpression" } },
     })
     .forEach((path) => {
@@ -53,22 +51,21 @@ function transformer(file, api) {
         return;
       }
 
-      const [key, fallback] = path.node.arguments;
+      const [key] = path.node.arguments;
 
       j(path).replaceWith(
-        getIn(
+        hasIn(
           j,
           path.node.callee.object,
           0,
           key.elements,
-          path.node.loc.start.line,
-          fallback
+          path.node.loc.start.line
         )
       );
     })
     .toSource();
 }
 
-transformer.displayName = "getIn";
+transformer.displayName = "hasIn";
 
 module.exports = transformer;

@@ -1,7 +1,7 @@
 const transformer = require("./listOf");
 const { testTransformer } = require("../testUtils");
 
-describe("fromJS", () => {
+describe("listOf", () => {
   test("Remove List.of calls", () => {
     testTransformer(
       transformer,

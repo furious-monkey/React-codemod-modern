@@ -1,51 +1,35 @@
-const transformer = require("./getIn");
+const transformer = require("./hasIn");
 const { testTransformer } = require("../testUtils");
 
-describe("getIn", () => {
-  test("Remove getIn calls", () => {
+describe("hasIn", () => {
+  test("Remove hasIn calls", () => {
     testTransformer(
       transformer,
       `
         import { fromJS } from "immutable";
 
-        const m = fromJS({ a: { b: true } }).getIn(['a', 'b']);
+        const m = fromJS({ a: { b: true } }).hasIn(['a', 'b']);
       `,
       `
         import { fromJS } from "immutable";
 
-        const m = fromJS({ a: { b: true } }).a?.b;
+        const m = !!fromJS({ a: { b: true } }).a?.b;
       `
     );
   });
 
-  test("Doesn`t tranform getIn in chains", () => {
+  test("Doesn`t tranform hasIn in chains", () => {
     testTransformer(
       transformer,
       `
         import { fromJS } from "immutable";
 
-        const m = fromJS({ a: { b: true } }).getIn(['a', 'b']).props();
+        const m = fromJS({ a: { b: true } }).hasIn(['a', 'b']).props();
       `,
       `
         import { fromJS } from "immutable";
 
-        const m = fromJS({ a: { b: true } }).getIn(['a', 'b']).props();
-      `
-    );
-  });
-
-  test("Provides fallback value", () => {
-    testTransformer(
-      transformer,
-      `
-      import { fromJS } from "immutable";
-
-      const m = fromJS({ a: { b: true } }).getIn(['a', 'b'], 'fallback');
-      `,
-      `
-      import { fromJS } from "immutable";
-
-      const m = (fromJS({ a: { b: true } }).a?.b ?? 'fallback');
+        const m = fromJS({ a: { b: true } }).hasIn(['a', 'b']).props();
       `
     );
   });
@@ -56,12 +40,12 @@ describe("getIn", () => {
       `
         import { fromJS } from "immutable";
 
-        const m = fromJS({ a: { b: true } }).getIn(['a']);
+        const m = fromJS({ a: { b: true } }).hasIn(['a']);
       `,
       `
         import { fromJS } from "immutable";
 
-        const m = fromJS({ a: { b: true } }).a;
+        const m = !!fromJS({ a: { b: true } }).a;
       `
     );
   });
@@ -72,12 +56,12 @@ describe("getIn", () => {
       `
         import { fromJS } from "immutable";
 
-        const m = fromJS({ a: { b: true } }).getIn(['a', 'b', 'c']);
+        const m = fromJS({ a: { b: true } }).hasIn(['a', 'b', 'c']);
       `,
       `
         import { fromJS } from "immutable";
 
-        const m = fromJS({ a: { b: true } }).a?.b?.c;
+        const m = !!fromJS({ a: { b: true } }).a?.b?.c;
       `
     );
   });
@@ -88,12 +72,12 @@ describe("getIn", () => {
       `
         import { fromJS } from "immutable";
 
-        const m = fromJS({ a: { b: true } }).getIn(['a', 0, 'c']);
+        const m = fromJS({ a: { b: true } }).hasIn(['a', 0, 'c']);
       `,
       `
         import { fromJS } from "immutable";
 
-        const m = fromJS({ a: { b: true } }).a?.[0]?.c;
+        const m = !!fromJS({ a: { b: true } }).a?.[0]?.c;
       `
     );
   });
@@ -104,12 +88,12 @@ describe("getIn", () => {
       `
         import { fromJS } from "immutable";
 
-        const m = fromJS({ a: { b: true } }).getIn(['a', '0', 'c']);
+        const m = fromJS({ a: { b: true } }).hasIn(['a', '0', 'c']);
       `,
       `
         import { fromJS } from "immutable";
 
-        const m = fromJS({ a: { b: true } }).a?.[0]?.c;
+        const m = !!fromJS({ a: { b: true } }).a?.[0]?.c;
       `
     );
   });
@@ -121,18 +105,18 @@ describe("getIn", () => {
         import { fromJS } from "immutable";
 
         const key = { name: 'a' };
-        const m = fromJS({ a: { b: true } }).getIn(['a', key.name, 'c']);
+        const m = fromJS({ a: { b: true } }).hasIn(['a', key.name, 'c']);
       `,
       `
         import { fromJS } from "immutable";
 
         const key = { name: 'a' };
-        const m = fromJS({ a: { b: true } }).a?.[key.name]?.c;
+        const m = !!fromJS({ a: { b: true } }).a?.[key.name]?.c;
       `
     );
   });
 
-  test("Ignores files with no getIn", () => {
+  test("Ignores files with no hasIn", () => {
     testTransformer(
       transformer,
       `

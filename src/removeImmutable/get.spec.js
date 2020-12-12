@@ -18,6 +18,22 @@ describe("get", () => {
     );
   });
 
+  test("Doesn`t tranform get in chains", () => {
+    testTransformer(
+      transformer,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS({ a: true }).get('a').props();
+      `,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS({ a: true }).get('a').props();
+      `
+    );
+  });
+
   test("Supports string fallback value", () => {
     testTransformer(
       transformer,

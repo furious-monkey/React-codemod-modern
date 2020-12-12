@@ -33,28 +33,22 @@ function transformer(file, api) {
 
   return j(file.source)
     .find(j.CallExpression, {
-      callee: { property: { name: "get" } },
+      callee: { property: { name: "has" } },
     })
     .forEach((path) => {
       if (path.name === "object") {
         return;
       }
 
-      const hasFallback = path.node.arguments.length > 1;
-
       const expression = getExpression(j, path);
 
       j(path).replaceWith(
-        hasFallback
-          ? j.parenthesizedExpression(
-              j.logicalExpression("??", expression, path.node.arguments[1])
-            )
-          : expression
+        j.unaryExpression("!", j.unaryExpression("!", expression, true), true)
       );
     })
     .toSource();
 }
 
-transformer.displayName = "get";
+transformer.displayName = "has";
 
 module.exports = transformer;

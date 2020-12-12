@@ -7,18 +7,25 @@ const map = require("./map");
 const mapMutations = require("./mapMutations");
 const toArray = require("./toArray");
 const toJS = require("./toJS");
-const { resolve } = require("path");
+const has = require("./has");
+const hasIn = require("./hasIn");
+const toEqualImmutable = require("./toEqualImmutable");
+const size = require("./size");
 
 const transforms = [
   fromJs,
   get,
   getIn,
+  has,
+  hasIn,
   listOf,
   list,
   map,
   mapMutations,
   toArray,
   toJS,
+  toEqualImmutable,
+  size,
 ];
 
 module.exports = function (file, api, options) {
@@ -28,23 +35,21 @@ module.exports = function (file, api, options) {
       return;
     }
 
-    try {
-      const nextSrc = transform({ ...file, source: src }, api, options);
+    // try {
+    const nextSrc = transform({ ...file, source: src }, api, options);
 
-      if (nextSrc) {
-        src = nextSrc;
-      }
-    } catch (e) {
-      console.log(
-        `Error in tranforming ${file.path} with transform "${transform.displayName}"`
-      );
-      console.log(src);
-      console.log(e.stack);
+    if (nextSrc) {
+      src = nextSrc;
     }
+    // } catch (e) {
+    //   console.log(
+    //     `Error in tranforming ${file.path} with transform "${transform.displayName}"`
+    //   );
+    //   console.log(src);
+    //   console.log(e.stack);
+    // }
   });
   return src;
 };
 
 module.exports.parser = "tsx";
-// module.exports.parserConfig = resolve(__dirname, "../parserConfig.json");
-// module.exports.extensions = ["js", "ts", "tsx"];
