@@ -18,6 +18,22 @@ describe("size", () => {
     );
   });
 
+  test("Doesn`t tranform size in chains", () => {
+    testTransformer(
+      transformer,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS({ a: true }).size.props();
+      `,
+      `
+        import { fromJS } from "immutable";
+
+        const m = fromJS({ a: true }).size.props();
+      `
+    );
+  });
+
   test("Ignores files with no size", () => {
     testTransformer(
       transformer,
