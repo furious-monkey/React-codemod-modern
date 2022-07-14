@@ -2,7 +2,7 @@ const moveFromPackageName = "import1";
 const moveToPackageName = "import2";
 const moveExports = ["a", "b"];
 
-function transformer(file, api) {
+function transformer(file, api, options) {
   const j = api.jscodeshift;
   const root = j(file.source);
   const importDeclaration = root.find(j.ImportDeclaration, {
@@ -33,7 +33,7 @@ function transformer(file, api) {
     }
   }
 
-  return root.toSource();
+  return root.toSource(options);
 }
 
 transformer.displayName = "refactorImports";
