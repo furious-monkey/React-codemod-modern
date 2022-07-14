@@ -1,5 +1,3 @@
-const addImportDeclaration = require("../removeReactIntl/addImportDeclaration");
-
 const moveFromPackageName = "import1";
 const moveToPackageName = "import2";
 const moveExports = ["a", "b"];
@@ -23,20 +21,16 @@ function transformer(file, api) {
     );
 
   if (importSpecifiersToBeMoved.length) {
-    const fixSource = addImportDeclaration(
-      j,
-      root,
-      moveToPackageName,
-      importSpecifiersToBeMoved.nodes().map((node) => node.imported.name)
-    );
+    importDeclaration.insertAfter(j.importDeclaration(
+      importSpecifiersToBeMoved.nodes(),
+      j.literal(moveToPackageName)
+    ))
 
     if (hasSpecifiersNotToBeMoved) {
       importSpecifiersToBeMoved.remove();
     } else {
       importDeclaration.remove();
     }
-
-    return fixSource(root.toSource());
   }
 
   return root.toSource();
