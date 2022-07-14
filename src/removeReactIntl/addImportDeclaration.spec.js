@@ -5,7 +5,7 @@ function transformer(file, api) {
   const j = api.jscodeshift;
   const root = j(file.source);
 
-  const fixSource = addImportDeclaration(j, root, "i18n", "t");
+  const fixSource = addImportDeclaration(j, root, "i18n", ["t"]);
 
   return fixSource(root.toSource({ quote: "single" }));
 }

@@ -59,7 +59,7 @@ function transformer(file, api) {
     importDeclaration.remove();
   }
 
-  const fixSource = addImportDeclaration(j, root, "i18n", "t");
+  const fixSource = addImportDeclaration(j, root, "i18n", ["t"]);
 
   return fixSource(
     elements

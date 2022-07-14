@@ -1,4 +1,4 @@
-function addImportDeclaration(j, root, source, specifier) {
+function addImportDeclaration(j, root, source, specifiers) {
   if (
     root.find(j.ImportDeclaration, {
       source: { value: source },
@@ -8,7 +8,7 @@ function addImportDeclaration(j, root, source, specifier) {
   }
 
   const newDeclaration = j.importDeclaration(
-    [j.importSpecifier(j.identifier(specifier))],
+    specifiers.map(specifier => j.importSpecifier(j.identifier(specifier))),
     j.literal(source)
   );
 
