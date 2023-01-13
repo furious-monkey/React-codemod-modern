@@ -6,6 +6,22 @@ function firstIsUppercase(str) {
   return str.charAt(0).toUpperCase() === str.charAt(0);
 }
 
+function getPropertyChain(path) {
+  if (path.parentPath.value.type === "MemberExpression") {
+    return [path.value.property.name, ...getPropertyChain(path.parentPath)];
+  }
+
+  return [path.value.property.name];
+}
+
+function getTopOfPropertyChain(path) {
+  if (path.parentPath.value.type === "MemberExpression") {
+    return getTopOfPropertyChain(path.parentPath);
+  }
+
+  return path;
+}
+
 function transformer(file, api, options) {
   const j = api.jscodeshift;
   const root = j(file.source);
@@ -16,7 +32,7 @@ function transformer(file, api, options) {
     .find(j.ImportSpecifier)
     .nodes()
     .map((spec) => {
-      return spec.local.name;
+      return [spec.imported.name, spec.local.name];
     });
 
   return root
@@ -24,19 +40,20 @@ function transformer(file, api, options) {
       j.MemberExpression,
       (path) =>
         path.object.type === "Identifier" &&
-        importSpecifiers.includes(path.object.name) &&
+        importSpecifiers.find((spec) => path.object.name === spec[1]) &&
         !firstIsUppercase(path.property.name)
     )
     .forEach((path) => {
-      const objectName = path.value.object.name;
-      const propertyName = path.value.property.name;
-      const parentPropertyName = path.parentPath.value.property.name;
-      const value = [objectName, propertyName, parentPropertyName].join(".");
+      const objectName = importSpecifiers.find(
+        (spec) => path.value.object.name === spec[1]
+      )[0];
+      const value = [objectName, ...getPropertyChain(path)].join(".");
+      const topPath = getTopOfPropertyChain(path);
 
-      if (path.parentPath.parentPath.value.type === "JSXExpressionContainer") {
-        j(path.parentPath.parentPath).replaceWith(j.literal(value));
+      if (topPath.parentPath.value.type === "JSXExpressionContainer") {
+        j(topPath.parentPath).replaceWith(j.literal(value));
       } else {
-        j(path.parentPath).replaceWith(j.literal(value));
+        j(topPath).replaceWith(j.literal(value));
       }
     })
     .toSource(options);

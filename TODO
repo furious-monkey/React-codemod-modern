@@ -1,6 +1,0 @@
-- Set
-- OrderedSet
-- OrderedMap
-
-- remove format message even if it's a property call
-- remove injectIntl
