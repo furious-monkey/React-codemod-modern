@@ -6,16 +6,16 @@ describe("FormattedMessage", () => {
     testTransformer(
       transformer,
       `
-        import React from 'react';
-        import { FormattedMessage } from 'react-intl';
+        import React from "react";
+        import { FormattedMessage } from "react-intl";
 
         const m = <FormattedMessage id="app.greeting" />;
       `,
       `
-        import React from 'react';
-        import { t } from 'i18n';
+        import React from "react";
+        import { t } from "i18n";
 
-        const m = t('app.greeting');
+        const m = t("app.greeting");
       `
     );
   });
@@ -24,17 +24,17 @@ describe("FormattedMessage", () => {
     testTransformer(
       transformer,
       `
-        import React from 'react';
-        import { FormattedMessage } from 'react-intl';
+        import React from "react";
+        import { FormattedMessage } from "react-intl";
 
-        const messageId = 'app.greeting';
+        const messageId = "app.greeting";
         const m = <FormattedMessage id={messageId} />;
       `,
       `
-        import React from 'react';
-        import { t } from 'i18n';
+        import React from "react";
+        import { t } from "i18n";
 
-        const messageId = 'app.greeting';
+        const messageId = "app.greeting";
         const m = t(messageId);
       `
     );
@@ -44,16 +44,16 @@ describe("FormattedMessage", () => {
     testTransformer(
       transformer,
       `
-        import React from 'react';
-        import { FormattedMessage } from 'react-intl';
+        import React from "react";
+        import { FormattedMessage } from "react-intl";
 
-        const m = <FormattedMessage id="app.greeting" values={{ name: 'Eric' }} />;
+        const m = <FormattedMessage id="app.greeting" values={{ name: "Eric" }} />;
       `,
       `
-        import React from 'react';
-        import { t } from 'i18n';
+        import React from "react";
+        import { t } from "i18n";
 
-        const m = t('app.greeting', { name: 'Eric' });
+        const m = t("app.greeting", { name: "Eric" });
       `
     );
   });
@@ -62,16 +62,16 @@ describe("FormattedMessage", () => {
     testTransformer(
       transformer,
       `
-        import React from 'react';
-        import { FormattedMessage } from 'react-intl';
+        import React from "react";
+        import { FormattedMessage } from "react-intl";
 
         const App = () => <div><FormattedMessage id="app.greeting" /></div>;
     `,
       `
-        import React from 'react';
-        import { t } from 'i18n';
+        import React from "react";
+        import { t } from "i18n";
 
-        const App = () => <div>{t('app.greeting')}</div>;
+        const App = () => <div>{t("app.greeting")}</div>;
     `
     );
   });
@@ -80,14 +80,14 @@ describe("FormattedMessage", () => {
     testTransformer(
       transformer,
       `
-        import React from 'react';
-        import { a } from 'react-intl';
+        import React from "react";
+        import { a } from "react-intl";
 
         const m = '1';
     `,
       `
-        import React from 'react';
-        import { a } from 'react-intl';
+        import React from "react";
+        import { a } from "react-intl";
 
         const m = '1';
     `
@@ -98,14 +98,14 @@ describe("FormattedMessage", () => {
     testTransformer(
       transformer,
       `
-        import React from 'react';
-        import { FormattedMessage } from 'react-intl';
+        import React from "react";
+        import { FormattedMessage } from "react-intl";
 
         const m = FormattedMessage;
     `,
       `
-        import React from 'react';
-        import { FormattedMessage } from 'react-intl';
+        import React from "react";
+        import { FormattedMessage } from "react-intl";
 
         const m = FormattedMessage;
     `

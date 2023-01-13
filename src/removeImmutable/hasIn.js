@@ -38,7 +38,7 @@ function hasIn(j, object, depth, key, line) {
   return j.unaryExpression("!", j.unaryExpression("!", expression, true), true);
 }
 
-function transformer(file, api) {
+function transformer(file, api, options) {
   const j = api.jscodeshift;
 
   return j(file.source)
@@ -63,7 +63,7 @@ function transformer(file, api) {
         )
       );
     })
-    .toSource();
+    .toSource(options);
 }
 
 transformer.displayName = "hasIn";

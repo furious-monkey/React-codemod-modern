@@ -30,7 +30,7 @@ function getValues(j, jsxElement) {
   return values;
 }
 
-function transformer(file, api) {
+function transformer(file, api, options) {
   const j = api.jscodeshift;
   const root = j(file.source);
   const importDeclaration = root.find(j.ImportDeclaration, {
@@ -50,7 +50,7 @@ function transformer(file, api) {
   });
 
   if (!localName || !elements.length) {
-    return root.toSource();
+    return root.toSource(options);
   }
 
   if (hasMultipleSpecifiers) {
@@ -77,7 +77,7 @@ function transformer(file, api) {
             : j.jsxExpressionContainer(expression)
         );
       })
-      .toSource({ quote: "single" })
+      .toSource(options)
   );
 }
 

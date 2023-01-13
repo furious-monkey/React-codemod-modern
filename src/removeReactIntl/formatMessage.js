@@ -1,6 +1,6 @@
 const addImportDeclaration = require("./addImportDeclaration");
 
-function transformer(file, api) {
+function transformer(file, api, options) {
   const j = api.jscodeshift;
   const root = j(file.source);
   const calls = root.find(j.CallExpression, {
@@ -14,7 +14,7 @@ function transformer(file, api) {
   });
 
   if (!calls.length) {
-    return root.toSource();
+    return root.toSource(options);
   }
 
   const fixSource = addImportDeclaration(j, root, "i18n", ["t"]);
@@ -31,7 +31,7 @@ function transformer(file, api) {
 
         j(path).replaceWith(expression);
       })
-      .toSource({ quote: "single" })
+      .toSource(options)
   );
 }
 

@@ -1,4 +1,4 @@
-function transformer(file, api) {
+function transformer(file, api, options) {
   const j = api.jscodeshift;
   const root = j(file.source);
   const importDeclaration = root.find(j.ImportDeclaration, {
@@ -29,7 +29,7 @@ function transformer(file, api) {
       const args = path.node.arguments;
       j(path).replaceWith(args.length ? args[0] : j.objectExpression([]));
     })
-    .toSource();
+    .toSource(options);
 }
 
 transformer.displayName = "map";

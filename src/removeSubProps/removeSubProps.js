@@ -6,7 +6,7 @@ function firstIsUppercase(str) {
   return str.charAt(0).toUpperCase() === str.charAt(0);
 }
 
-function transformer(file, api) {
+function transformer(file, api, options) {
   const j = api.jscodeshift;
   const root = j(file.source);
   const importDeclaration = root.find(j.ImportDeclaration, {
@@ -39,7 +39,7 @@ function transformer(file, api) {
         j(path.parentPath).replaceWith(j.literal(value));
       }
     })
-    .toSource();
+    .toSource(options);
 }
 
 transformer.displayName = "fromJS";

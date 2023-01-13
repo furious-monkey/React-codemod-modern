@@ -259,7 +259,7 @@ function findMutationCalls(j, root) {
   );
 }
 
-function transformer(file, api) {
+function transformer(file, api, options) {
   const j = api.jscodeshift;
   const root = j(file.source);
 
@@ -278,7 +278,7 @@ function transformer(file, api) {
         })
       );
     })
-    .toSource();
+    .toSource(options);
 }
 
 transformer.displayName = "mapMutations";

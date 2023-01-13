@@ -28,7 +28,7 @@ function getExpression(j, path) {
   );
 }
 
-function transformer(file, api) {
+function transformer(file, api, options) {
   const j = api.jscodeshift;
 
   return j(file.source)
@@ -46,7 +46,7 @@ function transformer(file, api) {
         j.unaryExpression("!", j.unaryExpression("!", expression, true), true)
       );
     })
-    .toSource();
+    .toSource(options);
 }
 
 transformer.displayName = "has";

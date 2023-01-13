@@ -1,4 +1,4 @@
-function transformer(file, api) {
+function transformer(file, api, options) {
   const j = api.jscodeshift;
   const root = j(file.source);
   const importDeclaration = root.find(j.ImportDeclaration, {
@@ -28,7 +28,7 @@ function transformer(file, api) {
     .forEach((path) => {
       j(path).replaceWith(path.node.arguments[0]);
     })
-    .toSource();
+    .toSource(options);
 }
 
 transformer.displayName = "fromJS";

@@ -6,13 +6,13 @@ describe("formatMessage", () => {
     testTransformer(
       transformer,
       `
-        import React from 'react';
+        import React from "react";
 
         const m = formatMessage({ id: 'app.greeting' });
       `,
       `
-        import React from 'react';
-        import { t } from 'i18n';
+        import React from "react";
+        import { t } from "i18n";
 
         const m = t('app.greeting');
       `
@@ -23,13 +23,13 @@ describe("formatMessage", () => {
     testTransformer(
       transformer,
       `
-        import React from 'react';
+        import React from "react";
 
         const m = formatMessage({ id: 'app.greeting' }, { name: 'Eric' });
       `,
       `
-        import React from 'react';
-        import { t } from 'i18n';
+        import React from "react";
+        import { t } from "i18n";
 
         const m = t('app.greeting', { name: 'Eric' });
       `

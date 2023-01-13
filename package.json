@@ -7,8 +7,8 @@
   "license": "MIT",
   "scripts": {
     "test": "jest",
-    "start:immutable": "jscodeshift -t src/removeImmutable --extensions=js,ts,tsx C:\\Users\\mucsi\\dev\\try-codemod\\demo\\immutable",
-    "start:react-intl": "jscodeshift -t src/removeReactIntl C:\\Users\\mucsi\\dev\\try-codemod\\demo\\react-intl",
+    "start:immutable": "jscodeshift -t src/removeImmutable --parser=tsx --extensions=js,ts,tsx C:\\Users\\mucsi\\dev\\try-codemod\\demo\\immutable",
+    "start:react-intl": "jscodeshift -t src/removeReactIntl --parser=tsx --extensions=js,ts,tsx C:\\Users\\mucsi\\dev\\try-codemod\\demo\\react-intl",
     "start": "yarn start:immutable && yarn start:react-intl"
   },
   "devDependencies": {

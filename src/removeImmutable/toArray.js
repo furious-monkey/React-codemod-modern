@@ -1,4 +1,4 @@
-function transformer(file, api) {
+function transformer(file, api, options) {
   const j = api.jscodeshift;
 
   return j(file.source)
@@ -8,7 +8,7 @@ function transformer(file, api) {
     .forEach((path) => {
       j(path).replaceWith(path.value.callee.object);
     })
-    .toSource();
+    .toSource(options);
 }
 
 transformer.displayName = "toArray";

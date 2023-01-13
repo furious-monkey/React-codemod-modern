@@ -1,4 +1,4 @@
-function transformer(file, api) {
+function transformer(file, api, options) {
   const j = api.jscodeshift;
 
   return j(file.source)
@@ -14,7 +14,7 @@ function transformer(file, api) {
         j.memberExpression(path.node.object, j.identifier("length"))
       );
     })
-    .toSource();
+    .toSource(options);
 }
 
 transformer.displayName = "size";
